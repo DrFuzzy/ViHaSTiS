@@ -1,0 +1,371 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ViHaSTiS</title>
+  <meta name="keywords" content="ViHaSTiS">
+  <meta name="description" content="ViHaSTiS MATLAB code for ViHaSTiS.fig">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html ViHaSTiS -->
+<h1>ViHaSTiS
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>ViHaSTiS MATLAB code for ViHaSTiS.fig</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function varargout = ViHaSTiS(varargin) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> ViHaSTiS MATLAB code for ViHaSTiS.fig
+    ViHaSTiS, by itself, creates a new ViHaSTiS or raises the existing
+    singleton*.
+
+    H = ViHaSTiS returns the handle to a new ViHaSTiS or the handle to
+    the existing singleton*.
+
+    ViHaSTiS('CALLBACK',hObject,eventData,handles,...) calls the local
+    function named CALLBACK in ViHaSTiS.M with the given input arguments.
+
+    ViHaSTiS('Property','Value',...) creates a new ViHaSTiS or raises the
+    existing singleton*.  Starting from the left, property value pairs are
+    applied to the GUI before ViHaSTiS_OpeningFcn gets called.  An
+    unrecognized property name or invalid value makes property application
+    stop.  All inputs are passed to ViHaSTiS_OpeningFcn via varargin.
+
+    *See GUI Options on GUIDE's Tools menu.  Choose &quot;GUI allows only one
+    instance to run (singleton)&quot;.
+
+ See also: GUIDE, GUIDATA, GUIHANDLES</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ROS_omni.html" class="code" title="function ROS_omni(coord, face, nodes_per_elem, numb_nodes, elements,young_modulus, poisson_ratio, handles_axes1, handles_axes2,window, fig, handles_disp, handles_f, handles_p)">ROS_omni</a>	ROS_omni - provides the interface with Phantom Omni haptic device</li><li><a href="read_file.html" class="code" title="function [coord, nodes_per_elem, numb_nodes, elements,face] = read_file(filename)">read_file</a>	triang_to_tetrah - read the obj file and converts the triange elements to</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function ViHaSTiS_OpeningFcn(hObject, eventdata, handles, varargin)</a></li><li><a href="#_sub2" class="code">function varargout = ViHaSTiS_OutputFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub3" class="code">function obj_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub4" class="code">function start_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub5" class="code">function young_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub6" class="code">function young_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub7" class="code">function poisson_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub8" class="code">function poisson_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub9" class="code">function fem_modeling_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub10" class="code">function edit11_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub11" class="code">function edit11_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub12" class="code">function figure1_CloseRequestFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub13" class="code">function edit25_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub14" class="code">function edit25_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub15" class="code">function edit24_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub16" class="code">function edit24_CreateFcn(hObject, eventdata, handles)</a></li><li><a href="#_sub17" class="code">function edit26_Callback(hObject, eventdata, handles)</a></li><li><a href="#_sub18" class="code">function edit26_CreateFcn(hObject, eventdata, handles)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function varargout = ViHaSTiS(varargin)</a>
+0002 <span class="comment">% ViHaSTiS MATLAB code for ViHaSTiS.fig</span>
+0003 <span class="comment">%    ViHaSTiS, by itself, creates a new ViHaSTiS or raises the existing</span>
+0004 <span class="comment">%    singleton*.</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">%    H = ViHaSTiS returns the handle to a new ViHaSTiS or the handle to</span>
+0007 <span class="comment">%    the existing singleton*.</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">%    ViHaSTiS('CALLBACK',hObject,eventData,handles,...) calls the local</span>
+0010 <span class="comment">%    function named CALLBACK in ViHaSTiS.M with the given input arguments.</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%    ViHaSTiS('Property','Value',...) creates a new ViHaSTiS or raises the</span>
+0013 <span class="comment">%    existing singleton*.  Starting from the left, property value pairs are</span>
+0014 <span class="comment">%    applied to the GUI before ViHaSTiS_OpeningFcn gets called.  An</span>
+0015 <span class="comment">%    unrecognized property name or invalid value makes property application</span>
+0016 <span class="comment">%    stop.  All inputs are passed to ViHaSTiS_OpeningFcn via varargin.</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%    *See GUI Options on GUIDE's Tools menu.  Choose &quot;GUI allows only one</span>
+0019 <span class="comment">%    instance to run (singleton)&quot;.</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% See also: GUIDE, GUIDATA, GUIHANDLES</span>
+0022 
+0023 <span class="comment">% Edit the above text to modify the response to help ViHaSTiS</span>
+0024 
+0025 <span class="comment">% Last Modified by GUIDE v2.5 21-May-2015 14:14:00</span>
+0026 
+0027 <span class="comment">% Begin initialization code - DO NOT EDIT</span>
+0028 gui_Singleton = 1;
+0029 gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+0030     <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+0031     <span class="string">'gui_OpeningFcn'</span>, @<a href="#_sub1" class="code" title="subfunction ViHaSTiS_OpeningFcn(hObject, eventdata, handles, varargin)">ViHaSTiS_OpeningFcn</a>, <span class="keyword">...</span>
+0032     <span class="string">'gui_OutputFcn'</span>,  @<a href="#_sub2" class="code" title="subfunction varargout = ViHaSTiS_OutputFcn(hObject, eventdata, handles)">ViHaSTiS_OutputFcn</a>, <span class="keyword">...</span>
+0033     <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+0034     <span class="string">'gui_Callback'</span>,   []);
+0035 <span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+0036     gui_State.gui_Callback = str2func(varargin{1});
+0037 <span class="keyword">end</span>
+0038 
+0039 <span class="keyword">if</span> nargout
+0040     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+0041 <span class="keyword">else</span>
+0042     gui_mainfcn(gui_State, varargin{:});
+0043 <span class="keyword">end</span>
+0044 <span class="comment">% End initialization code - DO NOT EDIT</span>
+0045 
+0046 
+0047 <span class="comment">% --- Executes just before ViHaSTiS is made visible.</span>
+0048 <a name="_sub1" href="#_subfunctions" class="code">function ViHaSTiS_OpeningFcn(hObject, eventdata, handles, varargin)</a>
+0049 <span class="comment">% This function has no output args, see OutputFcn.</span>
+0050 <span class="comment">% hObject    handle to figure</span>
+0051 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0052 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0053 <span class="comment">% varargin   command line arguments to ViHaSTiS (see VARARGIN)</span>
+0054 
+0055 <span class="comment">% Choose default command line output for ViHaSTiS</span>
+0056 handles.output = hObject;
+0057 
+0058 <span class="comment">% Update handles structure</span>
+0059 guidata(hObject, handles);
+0060 
+0061 <span class="comment">% UIWAIT makes ViHaSTiS wait for user response (see UIRESUME)</span>
+0062 <span class="comment">% uiwait(handles.figure1);</span>
+0063 
+0064 
+0065 <span class="comment">% --- Outputs from this function are returned to the command line.</span>
+0066 <a name="_sub2" href="#_subfunctions" class="code">function varargout = ViHaSTiS_OutputFcn(hObject, eventdata, handles)</a>
+0067 <span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+0068 <span class="comment">% hObject    handle to figure</span>
+0069 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0070 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0071 
+0072 <span class="comment">% Get default command line output from handles structure</span>
+0073 varargout{1} = handles.output;
+0074 
+0075 
+0076 <span class="comment">% --- Executes on button press in obj.</span>
+0077 <a name="_sub3" href="#_subfunctions" class="code">function obj_Callback(hObject, eventdata, handles)</a>
+0078 <span class="comment">% hObject    handle to obj (see GCBO)</span>
+0079 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0080 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0081 
+0082 <span class="comment">%select obj file to open</span>
+0083 [filename, pathname] = uigetfile(<span class="string">'*.obj'</span>, <span class="string">'Select a MATLAB code file'</span>);
+0084 handles.p=filename;
+0085 guidata(hObject,handles);
+0086 
+0087 <span class="comment">% --- Executes on button press in start.</span>
+0088 <a name="_sub4" href="#_subfunctions" class="code">function start_Callback(hObject, eventdata, handles)</a>
+0089 <span class="comment">% hObject    handle to start (see GCBO)</span>
+0090 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0091 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0092 
+0093 <span class="comment">% for quick load liver</span>
+0094 load liver.mat
+0095 
+0096 <span class="comment">% read obj file that user select</span>
+0097 [coord, nodes_per_elem,numb_nodes,elements,<span class="keyword">...</span>
+0098     face]=<a href="read_file.html" class="code" title="function [coord, nodes_per_elem, numb_nodes, elements,face] = read_file(filename)">read_file</a>(handles.p);
+0099 
+0100 <span class="comment">% take Young Modulus that user types</span>
+0101 value1=get(handles.young,<span class="string">'string'</span>);
+0102 young_modulus= str2num(value1);
+0103 
+0104 <span class="comment">% take Poisson ratio that user types</span>
+0105 value2=get(handles.poisson,<span class="string">'string'</span>);
+0106 poisson_ratio= str2num(value2);
+0107 
+0108 <span class="comment">% check if poisson is greater than 0.5 or lower than 0</span>
+0109 <span class="keyword">if</span> (poisson_ratio &gt;=0.5)|(poisson&lt;=0)
+0110     mess=sprintf(<span class="string">'the poisson ratio take values from 0 to 5'</span>);
+0111     set(handles.edit11,<span class="string">'string'</span>,mess)
+0112     <span class="keyword">return</span>
+0113 <span class="keyword">end</span>
+0114 
+0115 
+0116 <span class="comment">% set handles of figure in gui to tranfer to ros_omni function</span>
+0117 handles_axes1=handles.axes1;
+0118 handles_axes2=handles.axes2;
+0119 
+0120 <span class="comment">% set handles of static text to tranfer to ros_omni function</span>
+0121 
+0122 handles_disp=handles.edit24;
+0123 handles_f=handles.edit26;
+0124 handles_p=handles.edit25;
+0125 <span class="comment">% set handles of log to tranfer to ros_omni function</span>
+0126 window=handles.edit11;
+0127 
+0128 fig=handles.figure1;
+0129 
+0130 
+0131 <span class="comment">% main function where becomes all calculations</span>
+0132 <a href="ROS_omni.html" class="code" title="function ROS_omni(coord, face, nodes_per_elem, numb_nodes, elements,young_modulus, poisson_ratio, handles_axes1, handles_axes2,window, fig, handles_disp, handles_f, handles_p)">ROS_omni</a>(coord, face, nodes_per_elem, numb_nodes, elements,<span class="keyword">...</span>
+0133     young_modulus, poisson_ratio, handles_axes1,<span class="keyword">...</span>
+0134     handles_axes2, window, fig, handles_disp, handles_f ,handles_p)
+0135 
+0136 
+0137 
+0138 <a name="_sub5" href="#_subfunctions" class="code">function young_Callback(hObject, eventdata, handles)</a>
+0139 <span class="comment">% hObject    handle to young (see GCBO)</span>
+0140 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0141 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0142 
+0143 <span class="comment">% Hints: get(hObject,'String') returns contents of young as text</span>
+0144 <span class="comment">%  str2double(get(hObject,'String')) returns contents of young as a double</span>
+0145 
+0146 
+0147 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0148 <a name="_sub6" href="#_subfunctions" class="code">function young_CreateFcn(hObject, eventdata, handles)</a>
+0149 <span class="comment">% hObject    handle to young (see GCBO)</span>
+0150 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0151 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0152 
+0153 <span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+0154 <span class="comment">%       See ISPC and COMPUTER.</span>
+0155 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>),<span class="keyword">...</span>
+0156         get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0157     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0158 <span class="keyword">end</span>
+0159 
+0160 
+0161 <a name="_sub7" href="#_subfunctions" class="code">function poisson_Callback(hObject, eventdata, handles)</a>
+0162 <span class="comment">% hObject    handle to poisson (see GCBO)</span>
+0163 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0164 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0165 
+0166 <span class="comment">% Hints: get(hObject,'String') returns contents of poisson as text</span>
+0167 <span class="comment">%str2double(get(hObject,'String')) returns contents of poisson as a double</span>
+0168 
+0169 
+0170 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0171 <a name="_sub8" href="#_subfunctions" class="code">function poisson_CreateFcn(hObject, eventdata, handles)</a>
+0172 <span class="comment">% hObject    handle to poisson (see GCBO)</span>
+0173 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0174 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0175 
+0176 <span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+0177 <span class="comment">%       See ISPC and COMPUTER.</span>
+0178 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>),<span class="keyword">...</span>
+0179         get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0180     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0181 <span class="keyword">end</span>
+0182 
+0183 
+0184 
+0185 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0186 <a name="_sub9" href="#_subfunctions" class="code">function fem_modeling_CreateFcn(hObject, eventdata, handles)</a>
+0187 <span class="comment">% hObject    handle to fem_modeling (see GCBO)</span>
+0188 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0189 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0190 
+0191 
+0192 
+0193 <a name="_sub10" href="#_subfunctions" class="code">function edit11_Callback(hObject, eventdata, handles)</a>
+0194 <span class="comment">% hObject    handle to edit11 (see GCBO)</span>
+0195 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0196 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0197 
+0198 <span class="comment">% Hints: get(hObject,'String') returns contents of edit11 as text</span>
+0199 <span class="comment">% str2double(get(hObject,'String')) returns contents of edit11 as a double</span>
+0200 
+0201 
+0202 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0203 <a name="_sub11" href="#_subfunctions" class="code">function edit11_CreateFcn(hObject, eventdata, handles)</a>
+0204 <span class="comment">% hObject    handle to edit11 (see GCBO)</span>
+0205 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0206 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0207 
+0208 <span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+0209 <span class="comment">%       See ISPC and COMPUTER.</span>
+0210 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0211     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0212 <span class="keyword">end</span>
+0213 
+0214 
+0215 <span class="comment">% --- Executes when user attempts to close figure1.</span>
+0216 <a name="_sub12" href="#_subfunctions" class="code">function figure1_CloseRequestFcn(hObject, eventdata, handles)</a>
+0217 <span class="comment">% hObject    handle to figure1 (see GCBO)</span>
+0218 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0219 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0220 <span class="comment">% Close request function</span>
+0221 <span class="comment">% to display a question dialog box</span>
+0222 selection = questdlg(<span class="string">'Quit?'</span>,<span class="keyword">...</span>
+0223     <span class="string">'Close Request Function'</span>,<span class="keyword">...</span>
+0224     <span class="string">'Yes'</span>,<span class="string">'No'</span>,<span class="string">'Yes'</span>);
+0225 <span class="keyword">switch</span> selection,
+0226     <span class="keyword">case</span> <span class="string">'Yes'</span>,
+0227         delete(gcf)
+0228     <span class="keyword">case</span> <span class="string">'No'</span>
+0229         <span class="keyword">return</span>
+0230 <span class="keyword">end</span>
+0231 <span class="comment">% Hint: delete(hObject) closes the figure</span>
+0232 <span class="comment">%delete(hObject);</span>
+0233 
+0234 
+0235 
+0236 <a name="_sub13" href="#_subfunctions" class="code">function edit25_Callback(hObject, eventdata, handles)</a>
+0237 <span class="comment">% hObject    handle to edit25 (see GCBO)</span>
+0238 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0239 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0240 
+0241 <span class="comment">% Hints: get(hObject,'String') returns contents of edit25 as text</span>
+0242 <span class="comment">% str2double(get(hObject,'String')) returns contents of edit25 as a double</span>
+0243 
+0244 
+0245 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0246 <a name="_sub14" href="#_subfunctions" class="code">function edit25_CreateFcn(hObject, eventdata, handles)</a>
+0247 <span class="comment">% hObject    handle to edit25 (see GCBO)</span>
+0248 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0249 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0250 
+0251 <span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+0252 <span class="comment">%       See ISPC and COMPUTER.</span>
+0253 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>),<span class="keyword">...</span>
+0254         get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0255     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0256 <span class="keyword">end</span>
+0257 
+0258 
+0259 
+0260 <a name="_sub15" href="#_subfunctions" class="code">function edit24_Callback(hObject, eventdata, handles)</a>
+0261 <span class="comment">% hObject    handle to edit24 (see GCBO)</span>
+0262 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0263 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0264 
+0265 <span class="comment">% Hints: get(hObject,'String') returns contents of edit24 as text</span>
+0266 <span class="comment">% str2double(get(hObject,'String')) returns contents of edit24 as a double</span>
+0267 
+0268 
+0269 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0270 <a name="_sub16" href="#_subfunctions" class="code">function edit24_CreateFcn(hObject, eventdata, handles)</a>
+0271 <span class="comment">% hObject    handle to edit24 (see GCBO)</span>
+0272 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0273 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0274 
+0275 <span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+0276 <span class="comment">%       See ISPC and COMPUTER.</span>
+0277 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>),<span class="keyword">...</span>
+0278         get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0279     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0280 <span class="keyword">end</span>
+0281 
+0282 
+0283 
+0284 <a name="_sub17" href="#_subfunctions" class="code">function edit26_Callback(hObject, eventdata, handles)</a>
+0285 <span class="comment">% hObject    handle to edit26 (see GCBO)</span>
+0286 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0287 <span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+0288 
+0289 <span class="comment">% Hints: get(hObject,'String') returns contents of edit26 as text</span>
+0290 <span class="comment">% str2double(get(hObject,'String')) returns contents of edit26 as a double</span>
+0291 
+0292 
+0293 <span class="comment">% --- Executes during object creation, after setting all properties.</span>
+0294 <a name="_sub18" href="#_subfunctions" class="code">function edit26_CreateFcn(hObject, eventdata, handles)</a>
+0295 <span class="comment">% hObject    handle to edit26 (see GCBO)</span>
+0296 <span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+0297 <span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+0298 
+0299 <span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+0300 <span class="comment">%       See ISPC and COMPUTER.</span>
+0301 <span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>),<span class="keyword">...</span>
+0302         get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+0303     set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+0304 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

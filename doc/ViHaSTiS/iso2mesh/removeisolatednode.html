@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of removeisolatednode</title>
+  <meta name="keywords" content="removeisolatednode">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html ViHaSTiS --><!-- menu.html iso2mesh -->
+<h1>removeisolatednode
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [no,el]=removeisolatednode(node,elem) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ [no,el]=removeisolatednode(node,elem)
+
+ remove isolated nodes: nodes that are not included in any element
+
+ author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)
+
+ input:
+     node: list of node coordinates
+     elem: list of elements of the mesh
+
+ output:
+     no: node coordinates after removing the isolated nodes
+     el: element list of the resulting mesh
+
+ -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="meshcheckrepair.html" class="code" title="function [node,elem]=meshcheckrepair(node,elem,opt,varargin)">meshcheckrepair</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [no,el]=removeisolatednode(node,elem)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% [no,el]=removeisolatednode(node,elem)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% remove isolated nodes: nodes that are not included in any element</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% input:</span>
+0010 <span class="comment">%     node: list of node coordinates</span>
+0011 <span class="comment">%     elem: list of elements of the mesh</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% output:</span>
+0014 <span class="comment">%     no: node coordinates after removing the isolated nodes</span>
+0015 <span class="comment">%     el: element list of the resulting mesh</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</span>
+0018 <span class="comment">%</span>
+0019 
+0020 oid=1:size(node,1);       <span class="comment">% old node index</span>
+0021 idx=setdiff(oid,elem(:)); <span class="comment">% indices to the isolated nodes</span>
+0022 idx=sort(idx);
+0023 delta=zeros(size(oid));   
+0024 delta(idx)=1;
+0025 delta=-cumsum(delta);     <span class="comment">% calculate the new node index after removing the isolated nodes</span>
+0026 oid=oid+delta;            <span class="comment">% map to new index</span>
+0027 el=oid(elem);             <span class="comment">% element list in the new index</span>
+0028 no=node;                  
+0029 no(idx,:)=[];             <span class="comment">% remove the isolated nodes</span></pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

@@ -1,0 +1,22 @@
+/* Created by mdot for Matlab */
+digraph m2html {
+  ROS_omni -> finite_elements;
+  ROS_omni -> force;
+  ROS_omni -> global_stiffness;
+  ROS_omni -> new_vertices;
+  ViHaSTiS -> ROS_omni;
+  ViHaSTiS -> read_file;
+  new_vertices -> new_vertices;
+  read_file -> read_wobj;
+  read_file -> surf2mesh;
+
+  ROS_omni [URL="ROS_omni.html"];
+  ViHaSTiS [URL="ViHaSTiS.html"];
+  finite_elements [URL="finite_elements.html"];
+  force [URL="force.html"];
+  global_stiffness [URL="global_stiffness.html"];
+  new_vertices [URL="new_vertices.html"];
+  read_file [URL="read_file.html"];
+  read_wobj [URL="read_wobj.html"];
+  surf2mesh [URL="surf2mesh.html"];
+}

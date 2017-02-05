@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of fallbackexeext</title>
+  <meta name="keywords" content="fallbackexeext">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html ViHaSTiS --><!-- menu.html iso2mesh -->
+<h1>fallbackexeext
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function exesuff=fallbackexeext(exesuffix, exename) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ exesuff=fallbackexeext(exesuffix, exename)
+
+ get the fallback external tool extension names for the current platform
+
+ author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)
+
+ input:
+     exesuffix: the output executable suffix from getexeext
+     exename: the executable name
+
+ output:
+     exesuff: file extension for iso2mesh tool binaries
+
+ -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="mcpath.html" class="code" title="function binname=mcpath(fname)">mcpath</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="meshcheckrepair.html" class="code" title="function [node,elem]=meshcheckrepair(node,elem,opt,varargin)">meshcheckrepair</a>	</li><li><a href="meshresample.html" class="code" title="function [node,elem]=meshresample(v,f,keepratio)">meshresample</a>	</li><li><a href="surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li><li><a href="../../ViHaSTiS/surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function exesuff=fallbackexeext(exesuffix, exename)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% exesuff=fallbackexeext(exesuffix, exename)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% get the fallback external tool extension names for the current platform</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% input:</span>
+0010 <span class="comment">%     exesuffix: the output executable suffix from getexeext</span>
+0011 <span class="comment">%     exename: the executable name</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% output:</span>
+0014 <span class="comment">%     exesuff: file extension for iso2mesh tool binaries</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</span>
+0017 <span class="comment">%</span>
+0018 
+0019 exesuff=exesuffix;
+0020 <span class="keyword">if</span>(strcmp(exesuff,<span class="string">'.mexa64'</span>) &amp; exist([<a href="mcpath.html" class="code" title="function binname=mcpath(fname)">mcpath</a>(exename) exesuff],<span class="string">'file'</span>)==0) <span class="comment">% fall back to i386 linux</span>
+0021         exesuff=<span class="string">'.mexglx'</span>;
+0022     <span class="keyword">return</span>;
+0023 <span class="keyword">end</span>
+0024 <span class="keyword">if</span>(strcmp(exesuff,<span class="string">'.mexmaci64'</span>) &amp; exist([<a href="mcpath.html" class="code" title="function binname=mcpath(fname)">mcpath</a>(exename) exesuff],<span class="string">'file'</span>)==0) <span class="comment">% fall back to i386 mac</span>
+0025         exesuff=<span class="string">'.mexmaci'</span>;
+0026 <span class="keyword">end</span>
+0027 <span class="keyword">if</span>(strcmp(exesuff,<span class="string">'.mexmaci'</span>) &amp; exist([<a href="mcpath.html" class="code" title="function binname=mcpath(fname)">mcpath</a>(exename) exesuff],<span class="string">'file'</span>)==0) <span class="comment">% fall back to ppc mac</span>
+0028         exesuff=<span class="string">'.mexmac'</span>;
+0029 <span class="keyword">end</span>
+0030</pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

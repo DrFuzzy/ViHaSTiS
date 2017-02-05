@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of global_stiffness</title>
+  <meta name="keywords" content="global_stiffness">
+  <meta name="description" content="assemb_global_stiffnessm - calculate global stiffness matrix of soft">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html ViHaSTiS -->
+<h1>global_stiffness
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>assemb_global_stiffnessm - calculate global stiffness matrix of soft</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Inv_Kg, R, num_rig] = global_stiffness(numb_nodes, coord,nodes_per_elem, elements, Ke, rigid, coord_find) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">assemb_global_stiffnessm - calculate global stiffness matrix of soft
+tissue
+
+ Syntax: [Inv_Kg, R, num_rig] = assemb_global_stiffnessm(numb_nodes,...
+                   coord, nodes_per_elem, elements, Ke, rigid, coord_find)
+ Inputs:
+    numb_nodes - number of nodes
+    coord - matrix with coordinates of all nodes
+    nodes_per_elem - matrix with the nodes connecting each element
+    elements - number of elements
+    R - connectivity matrix
+    Ke - metrix with the stiifness matrix for each element
+    rigid  - coordinates of nodes which are fixed
+    coord_find - matrix with nodes coordinates we used into find function
+
+
+ Outputs:
+    Inv_Kg - inverse global stiffness matrix
+    R - connectivity matrix
+    num_rig - number of fixed nodes
+
+
+ Other m-files required: none
+ Subfunctions: none
+ MAT-files required: none
+
+
+ Author: Dimitris Dounas
+ Work address: none
+ email: jdounas1992@gmail.com
+ Website: none
+ May 2015; Last revision: none</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ROS_omni.html" class="code" title="function ROS_omni(coord, face, nodes_per_elem, numb_nodes, elements,young_modulus, poisson_ratio, handles_axes1, handles_axes2,window, fig, handles_disp, handles_f, handles_p)">ROS_omni</a>	ROS_omni - provides the interface with Phantom Omni haptic device</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Inv_Kg, R, num_rig] = global_stiffness(numb_nodes, coord,</a><span class="keyword">...</span>
+0002     nodes_per_elem, elements, Ke, rigid, coord_find)
+0003 <span class="comment">%assemb_global_stiffnessm - calculate global stiffness matrix of soft</span>
+0004 <span class="comment">%tissue</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Syntax: [Inv_Kg, R, num_rig] = assemb_global_stiffnessm(numb_nodes,...</span>
+0007 <span class="comment">%                   coord, nodes_per_elem, elements, Ke, rigid, coord_find)</span>
+0008 <span class="comment">% Inputs:</span>
+0009 <span class="comment">%    numb_nodes - number of nodes</span>
+0010 <span class="comment">%    coord - matrix with coordinates of all nodes</span>
+0011 <span class="comment">%    nodes_per_elem - matrix with the nodes connecting each element</span>
+0012 <span class="comment">%    elements - number of elements</span>
+0013 <span class="comment">%    R - connectivity matrix</span>
+0014 <span class="comment">%    Ke - metrix with the stiifness matrix for each element</span>
+0015 <span class="comment">%    rigid  - coordinates of nodes which are fixed</span>
+0016 <span class="comment">%    coord_find - matrix with nodes coordinates we used into find function</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">% Outputs:</span>
+0020 <span class="comment">%    Inv_Kg - inverse global stiffness matrix</span>
+0021 <span class="comment">%    R - connectivity matrix</span>
+0022 <span class="comment">%    num_rig - number of fixed nodes</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">% Other m-files required: none</span>
+0026 <span class="comment">% Subfunctions: none</span>
+0027 <span class="comment">% MAT-files required: none</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">% Author: Dimitris Dounas</span>
+0031 <span class="comment">% Work address: none</span>
+0032 <span class="comment">% email: jdounas1992@gmail.com</span>
+0033 <span class="comment">% Website: none</span>
+0034 <span class="comment">% May 2015; Last revision: none</span>
+0035 
+0036 <span class="comment">%------------- BEGIN CODE --------------</span>
+0037 
+0038 <span class="comment">% Re has nodes coordinates</span>
+0039 Re(:,:)= coord(:,:);
+0040 
+0041 <span class="comment">% find which nodes is rigid</span>
+0042 num_rig=size(rigid,1);
+0043 P=zeros(num_rig,1);
+0044 M=zeros(num_rig,1);
+0045 N=zeros(num_rig,1);
+0046 
+0047 <span class="keyword">for</span> ym=1:num_rig;
+0048     P(ym)=find(coord_find(:,1)==rigid(ym,1));
+0049     M(ym)=find(coord_find(:,2)==rigid(ym,2));
+0050     N(ym)=find(coord_find(:,3)==rigid(ym,3));
+0051     
+0052     <span class="comment">% check if rigid node that user select exist</span>
+0053     <span class="keyword">if</span> (P(ym)~=M(ym))&amp;(P(ym)~=N(ym))
+0054         disp(<span class="string">'error with the point'</span>)
+0055     <span class="keyword">end</span>
+0056 <span class="keyword">end</span>
+0057 
+0058 <span class="comment">% replace the rigid nodes with zeros in Re matrix</span>
+0059 <span class="keyword">for</span> zm=1:num_rig;
+0060     Re(P(zm)',:)=[0 0 0];
+0061 <span class="keyword">end</span>
+0062 
+0063 nom = size(Re,2);
+0064 <span class="comment">% numbers the Degrees of Freedom</span>
+0065 item = 0;
+0066 
+0067 <span class="keyword">for</span> i = 1:numb_nodes;
+0068     <span class="keyword">for</span> j = 1:nom;
+0069         <span class="keyword">if</span> Re(i,j) ~= 0;
+0070             item = item +1;
+0071             Re(i,j) = item;
+0072         <span class="keyword">end</span>
+0073     <span class="keyword">end</span>
+0074 <span class="keyword">end</span>
+0075 
+0076 
+0077 <span class="comment">% create the connectivity array</span>
+0078 <span class="keyword">for</span> i = 1:elements
+0079     R(i,:) = [Re(nodes_per_elem(i,1),:) Re(nodes_per_elem(i,2),:) <span class="keyword">...</span>
+0080         Re(nodes_per_elem(i,3),:) Re(nodes_per_elem(i,4),:)];
+0081 <span class="keyword">end</span>
+0082 
+0083 <span class="comment">% calculation of Global stiffness matrix</span>
+0084 Kg(item,item)=0;
+0085 <span class="keyword">for</span> x = 1:elements;
+0086     <span class="keyword">for</span> sat = 1:12;
+0087         <span class="keyword">for</span> sut = 1:12;
+0088             <span class="keyword">if</span> (R(x,sat) ~= 0)
+0089                 <span class="keyword">if</span> (R(x,sut) ~= 0);
+0090                     Kg(R(x,sut),R(x,sat)) = Kg(R(x,sut),R(x,sat))<span class="keyword">...</span>
+0091                         + Ke(sat,sut,x);
+0092                 <span class="keyword">end</span>
+0093             <span class="keyword">end</span>
+0094         <span class="keyword">end</span>
+0095     <span class="keyword">end</span>
+0096 <span class="keyword">end</span>
+0097 
+0098 Inv_Kg=inv(Kg);
+0099 
+0100 <span class="keyword">end</span> <span class="comment">%function</span>
+0101 
+0102 <span class="comment">%------------- END OF CODE --------------</span></pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

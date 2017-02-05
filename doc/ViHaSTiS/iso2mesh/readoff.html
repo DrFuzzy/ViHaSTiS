@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of readoff</title>
+  <meta name="keywords" content="readoff">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html ViHaSTiS --><!-- menu.html iso2mesh -->
+<h1>readoff
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [node,elem]=readoff(fname) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ [node,elem]=readoff(fname)
+
+ read Geomview Object File Format (OFF)
+
+ author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)
+ date: 2008/03/28
+
+ input:
+    fname: name of the OFF data file
+
+ output:
+    node: node coordinates of the mesh
+    elem: list of elements of the mesh        
+
+ -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="meshcheckrepair.html" class="code" title="function [node,elem]=meshcheckrepair(node,elem,opt,varargin)">meshcheckrepair</a>	</li><li><a href="meshresample.html" class="code" title="function [node,elem]=meshresample(v,f,keepratio)">meshresample</a>	</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function str=nonemptyline(fid)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [node,elem]=readoff(fname)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% [node,elem]=readoff(fname)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% read Geomview Object File Format (OFF)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)</span>
+0008 <span class="comment">% date: 2008/03/28</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% input:</span>
+0011 <span class="comment">%    fname: name of the OFF data file</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% output:</span>
+0014 <span class="comment">%    node: node coordinates of the mesh</span>
+0015 <span class="comment">%    elem: list of elements of the mesh</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</span>
+0018 <span class="comment">%</span>
+0019 
+0020 node=[];
+0021 elem=[];
+0022 fid=fopen(fname,<span class="string">'rt'</span>);
+0023 line=fgetl(fid);
+0024 dim=sscanf(line,<span class="string">'OFF %d %d %d'</span>);
+0025 line=<a href="#_sub1" class="code" title="subfunction str=nonemptyline(fid)">nonemptyline</a>(fid);
+0026 <span class="keyword">if</span>(size(dim,1)~=3)
+0027     dim=sscanf(line,<span class="string">'%d'</span>,3);
+0028     line=<a href="#_sub1" class="code" title="subfunction str=nonemptyline(fid)">nonemptyline</a>(fid);
+0029 <span class="keyword">end</span>
+0030 nodalcount=3;
+0031 <span class="keyword">if</span>(~isempty(line))
+0032     [val nodalcount]=sscanf(line,<span class="string">'%f'</span>,inf);
+0033 <span class="keyword">else</span>
+0034     fclose(fid);
+0035     <span class="keyword">return</span>;
+0036 <span class="keyword">end</span>
+0037 node=fscanf(fid,<span class="string">'%f'</span>,[nodalcount,dim(1)-1])';
+0038 node=[val(:)';node];
+0039 
+0040 line=<a href="#_sub1" class="code" title="subfunction str=nonemptyline(fid)">nonemptyline</a>(fid);
+0041 facetcount=4;
+0042 <span class="keyword">if</span>(~isempty(line))
+0043     [val facetcount]=sscanf(line,<span class="string">'%f'</span>,inf);
+0044 <span class="keyword">else</span>
+0045     fclose(fid);
+0046     <span class="keyword">return</span>;
+0047 <span class="keyword">end</span>
+0048 elem=fscanf(fid,<span class="string">'%f'</span>,[facetcount,dim(2)-1])';
+0049 elem=[val(:)';elem];
+0050 fclose(fid);
+0051 elem(:,1)=[];
+0052 
+0053 <span class="keyword">if</span>(size(elem,2)&lt;=3)
+0054     elem(:,1:3)=round(elem(:,1:3))+1;
+0055 <span class="keyword">else</span>
+0056     elem(:,1:4)=round(elem(:,1:4))+1;
+0057 <span class="keyword">end</span>
+0058 
+0059 <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0060 
+0061 <a name="_sub1" href="#_subfunctions" class="code">function str=nonemptyline(fid)</a>
+0062 str=<span class="string">''</span>;
+0063 <span class="keyword">if</span>(fid==0) error(<span class="string">'invalid file'</span>); <span class="keyword">end</span>
+0064 <span class="keyword">while</span>((isempty(regexp(str,<span class="string">'\S'</span>)) || ~isempty(regexp(str,<span class="string">'^#'</span>)))  &amp;&amp; ~feof(fid))
+0065     str=fgetl(fid);
+0066     <span class="keyword">if</span>(~ischar(str))
+0067         str=<span class="string">''</span>;
+0068         <span class="keyword">return</span>;
+0069     <span class="keyword">end</span>
+0070 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

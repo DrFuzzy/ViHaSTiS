@@ -1,0 +1,293 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of savesurfpoly</title>
+  <meta name="keywords" content="savesurfpoly">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html ViHaSTiS --><!-- menu.html iso2mesh -->
+<h1>savesurfpoly
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function savesurfpoly(v,f,holelist,regionlist,p0,p1,fname,forcebox) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ savesurfpoly(v,f,holelist,regionlist,p0,p1,fname)
+
+ save a set of surfaces into poly format (for tetgen)
+
+ author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)
+ date: 2007/11/21
+
+ input:
+      v: input, surface node list, dimension (nn,3)
+         if v has 4 columns, the last column specifies mesh density near each node
+      f: input, surface face element list, dimension (be,3)
+      holelist: list of holes, each hole is represented by an internal point
+      regionlist: list of regions, similar to holelist
+      p0: coordinate of one of the end of the bounding box
+      p1: coordinate for the other end of the bounding box
+      fname: output file name
+      forcebox: non-empty: add bounding box, []: automatic
+                if forcebox is a 8x1 vector, it will be used to 
+                specify max-edge size near the bounding box corners
+
+ -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="bbxflatsegment.html" class="code" title="function seg=bbxflatsegment(node,loop)">bbxflatsegment</a>	</li><li><a href="extractloops.html" class="code" title="function loops=extractloops(edges)">extractloops</a>	</li><li><a href="internalpoint.html" class="code" title="function p=internalpoint(v,aloop)">internalpoint</a>	</li><li><a href="surfedge.html" class="code" title="function openedge=surfedge(f)">surfedge</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li><li><a href="../../ViHaSTiS/surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function savesurfpoly(v,f,holelist,regionlist,p0,p1,fname,forcebox)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% savesurfpoly(v,f,holelist,regionlist,p0,p1,fname)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% save a set of surfaces into poly format (for tetgen)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)</span>
+0008 <span class="comment">% date: 2007/11/21</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% input:</span>
+0011 <span class="comment">%      v: input, surface node list, dimension (nn,3)</span>
+0012 <span class="comment">%         if v has 4 columns, the last column specifies mesh density near each node</span>
+0013 <span class="comment">%      f: input, surface face element list, dimension (be,3)</span>
+0014 <span class="comment">%      holelist: list of holes, each hole is represented by an internal point</span>
+0015 <span class="comment">%      regionlist: list of regions, similar to holelist</span>
+0016 <span class="comment">%      p0: coordinate of one of the end of the bounding box</span>
+0017 <span class="comment">%      p1: coordinate for the other end of the bounding box</span>
+0018 <span class="comment">%      fname: output file name</span>
+0019 <span class="comment">%      forcebox: non-empty: add bounding box, []: automatic</span>
+0020 <span class="comment">%                if forcebox is a 8x1 vector, it will be used to</span>
+0021 <span class="comment">%                specify max-edge size near the bounding box corners</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</span>
+0024 <span class="comment">%</span>
+0025 dobbx=0;
+0026 <span class="keyword">if</span>(nargin&gt;=8)
+0027     dobbx=~isempty(forcebox) &amp; all(forcebox);
+0028 <span class="keyword">end</span>
+0029 
+0030 <span class="keyword">if</span>(~iscell(f) &amp; size(f,2)==4)
+0031     faceid=f(:,4);
+0032     f=f(:,1:3);
+0033 <span class="keyword">end</span>
+0034 
+0035 <span class="keyword">if</span>(~iscell(f))
+0036     edges=<a href="surfedge.html" class="code" title="function openedge=surfedge(f)">surfedge</a>(f);
+0037 <span class="keyword">else</span>
+0038     edges=[];
+0039 <span class="keyword">end</span>
+0040 bbxnum=0;
+0041 
+0042 nodesize=[];
+0043 <span class="keyword">if</span>(size(v,2)==4)
+0044    nodesize=v(:,4);
+0045    v=v(:,1:3);
+0046 <span class="keyword">end</span>
+0047 node=v;
+0048 loopid=[];
+0049 <span class="keyword">if</span>(~isempty(edges))
+0050     loops=<a href="extractloops.html" class="code" title="function loops=extractloops(edges)">extractloops</a>(edges);
+0051     <span class="keyword">if</span>(length(loops)&lt;3)
+0052         error(<span class="string">'degenerated loops detected'</span>);
+0053     <span class="keyword">end</span>
+0054     seg=[0,find(isnan(loops))];
+0055     segnum=length(seg)-1;
+0056     newloops=[];
+0057     <span class="keyword">for</span> i=1:segnum
+0058        <span class="keyword">if</span>(seg(i+1)-(seg(i)+1)==0) <span class="keyword">continue</span>; <span class="keyword">end</span>
+0059        newloops=[newloops nan <a href="bbxflatsegment.html" class="code" title="function seg=bbxflatsegment(node,loop)">bbxflatsegment</a>(node,loops(seg(i)+1:seg(i+1)-1))];
+0060     <span class="keyword">end</span>
+0061     loops=[newloops nan];
+0062 
+0063     seg=[0,find(isnan(loops))];
+0064     segnum=length(seg)-1;
+0065     bbxnum=6;
+0066     loopcount=zeros(bbxnum,1);
+0067     loopid=zeros(segnum,1);
+0068     <span class="keyword">for</span> i=1:segnum     <span class="comment">% walk through the edge loops</span>
+0069         subloop=loops(seg(i)+1:seg(i+1)-1);
+0070         <span class="keyword">if</span>(isempty(subloop)) <span class="keyword">continue</span>; <span class="keyword">end</span>
+0071         boxfacet=find(sum(abs(diff(v(subloop,:))))&lt;1e-8); <span class="comment">% find a flat loop</span>
+0072         <span class="keyword">if</span>(length(boxfacet)==1)   <span class="comment">% if the loop is flat along x/y/z dir</span>
+0073             bf=boxfacet(1);    <span class="comment">% no degeneracy allowed</span>
+0074             <span class="keyword">if</span>(sum(abs(v(subloop(1),bf)-p0(bf)))&lt;1e-2)
+0075                 loopcount(bf)=loopcount(bf)+1;
+0076                 v(subloop,bf)=p0(bf);
+0077                 loopid(i)=bf;
+0078             <span class="keyword">elseif</span>(sum(abs(v(subloop(1),bf)-p1(bf)))&lt;1e-2)
+0079                 loopcount(bf+3)=loopcount(bf+3)+1;
+0080                 v(subloop,bf)=p1(bf);
+0081                 loopid(i)=bf+3;
+0082             <span class="keyword">end</span>
+0083         <span class="keyword">end</span>
+0084     <span class="keyword">end</span>
+0085 <span class="keyword">end</span>
+0086 
+0087 <span class="keyword">if</span>(dobbx &amp; isempty(edges))
+0088     bbxnum=6;
+0089     loopcount=zeros(bbxnum,1);    
+0090 <span class="keyword">end</span>
+0091 
+0092 <span class="keyword">if</span>(dobbx|~isempty(edges))
+0093     nn=size(v,1);
+0094     boxnode=[p0;p1(1),p0(2:3);p1(1:2),p0(3);p0(1),p1(2),p0(3);
+0095               p0(1:2),p1(3);p1(1),p0(2),p1(3);p1;p0(1),p1(2:3)];
+0096     boxelem=[
+0097         4 nn nn+3 nn+7 nn+4;   <span class="comment">% x=xmin</span>
+0098         4 nn nn+1 nn+5 nn+4;   <span class="comment">% y=ymin</span>
+0099         4 nn nn+1 nn+2 nn+3;   <span class="comment">% z=zmin</span>
+0100         4 nn+1 nn+2 nn+6 nn+5; <span class="comment">% x=xmax</span>
+0101         4 nn+2 nn+3 nn+7 nn+6; <span class="comment">% y=ymax</span>
+0102         4 nn+4 nn+5 nn+6 nn+7];<span class="comment">% z=zmax</span>
+0103 
+0104     node=[v;boxnode];
+0105 <span class="keyword">end</span>
+0106 
+0107 node=[(0:size(node,1)-1)',node];
+0108 
+0109 fp=fopen(fname,<span class="string">'wt'</span>);
+0110 fprintf(fp,<span class="string">'#node list\n%d 3 0 0\n'</span>,length(node));
+0111 fprintf(fp,<span class="string">'%d %f %f %f\n'</span>,node');
+0112 
+0113 <span class="keyword">if</span>(~iscell(f))
+0114     fprintf(fp,<span class="string">'#facet list\n%d 1\n'</span>,length(f)+bbxnum);
+0115     elem=[3*ones(length(f),1),f-1,ones(length(f),1)];
+0116     <span class="keyword">if</span>(~isempty(elem))
+0117     fprintf(fp,<span class="string">'1 0\n%d %d %d %d %d\n'</span>,elem');
+0118     <span class="keyword">end</span>
+0119 <span class="keyword">else</span> <span class="comment">% if the surface is recorded as a cell array</span>
+0120     totalplc=0;
+0121     <span class="keyword">for</span> i=1:length(f)
+0122         <span class="keyword">if</span>(~iscell(f{i}))
+0123             totalplc=totalplc+size(f{i},1);
+0124         <span class="keyword">else</span>
+0125             totalplc=totalplc+size(f{i}{1},1);
+0126         <span class="keyword">end</span>
+0127     <span class="keyword">end</span>
+0128     fprintf(fp,<span class="string">'#facet list\n%d 1\n'</span>,totalplc+bbxnum);
+0129     <span class="keyword">for</span> i=1:length(f)
+0130         plcs=f{i};
+0131         faceid=-1;
+0132         <span class="keyword">if</span>(iscell(plcs)) <span class="comment">% if each face is a cell, use plc{2} for face id</span>
+0133             <span class="keyword">if</span>(length(plcs)&gt;1)
+0134                 faceid=plcs{2};
+0135             <span class="keyword">end</span>
+0136             plcs=plcs{1};
+0137         <span class="keyword">end</span>
+0138         <span class="keyword">for</span> row=1:size(plcs,1);
+0139          plc=plcs(row,:);
+0140          <span class="keyword">if</span>(any(isnan(plc))) <span class="comment">% we use nan to separate outter contours and holes</span>
+0141             holeid=find(isnan(plc));
+0142             <span class="keyword">if</span>(faceid&gt;0) 
+0143                 fprintf(fp,<span class="string">'%d %d %d\n%d'</span>,length(holeid)+1,length(holeid),faceid,holeid(1)-1);
+0144             <span class="keyword">else</span>
+0145                 fprintf(fp,<span class="string">'%d %d\n%d'</span>,length(holeid)+1,length(holeid),holeid(1)-1);
+0146             <span class="keyword">end</span>
+0147             fprintf(fp,<span class="string">'\t%d'</span>,plc(1:holeid(1)-1)-1);
+0148             fprintf(fp,<span class="string">'\t1\n'</span>);
+0149             <span class="keyword">for</span> j=1:length(holeid)
+0150                 <span class="keyword">if</span>(j==length(holeid))
+0151                     fprintf(fp,<span class="string">'%d'</span>,length(plc(holeid(j)+1:end)));
+0152                 fprintf(fp,<span class="string">'\t%d'</span>,plc(holeid(j)+1:end)-1);
+0153                 <span class="keyword">else</span>
+0154                     fprintf(fp,<span class="string">'%d'</span>,length(plc(holeid(j)+1:holeid(j+1)-1)));
+0155                     fprintf(fp,<span class="string">'\t%d'</span>,plc(holeid(j)+1:holeid(j+1)-1)-1);
+0156                 <span class="keyword">end</span>
+0157                 fprintf(fp,<span class="string">'\t1\n'</span>);
+0158             <span class="keyword">end</span>
+0159             <span class="keyword">for</span> j=1:length(holeid)
+0160                 <span class="keyword">if</span>(j==length(holeid))
+0161                     fprintf(fp,<span class="string">'%d %f %f %f\n'</span>,j,mean(node(plc(holeid(j)+1:end),2:4)));
+0162                 <span class="keyword">else</span>
+0163                     fprintf(fp,<span class="string">'%d %f %f %f\n'</span>,j,mean(node(plc(holeid(j)+1:holeid(j+1)-1),2:4)));
+0164                 <span class="keyword">end</span>
+0165             <span class="keyword">end</span>
+0166          <span class="keyword">else</span>
+0167             <span class="keyword">if</span>(faceid&gt;0)
+0168                 fprintf(fp,<span class="string">'1 0 %d\n%d'</span>,faceid,length(plc));
+0169             <span class="keyword">else</span>
+0170                 fprintf(fp,<span class="string">'1 0\n%d'</span>,length(plc));
+0171             <span class="keyword">end</span>
+0172             fprintf(fp,<span class="string">'\t%d'</span>,plc-1);
+0173             fprintf(fp,<span class="string">'\t1\n'</span>);
+0174          <span class="keyword">end</span>
+0175         <span class="keyword">end</span>
+0176     <span class="keyword">end</span>
+0177 <span class="keyword">end</span>
+0178 
+0179 <span class="keyword">if</span>(dobbx|~isempty(edges))
+0180     <span class="keyword">for</span> i=1:bbxnum
+0181         fprintf(fp,<span class="string">'%d %d 1\n'</span>,1+loopcount(i),loopcount(i));
+0182         fprintf(fp,<span class="string">'%d %d %d %d %d\n'</span>,boxelem(i,:));
+0183         <span class="keyword">if</span>(~isempty(edges) &amp; loopcount(i) &amp;~isempty(find(loopid==i)))
+0184             endid=find(loopid==i);
+0185             <span class="keyword">for</span> k=1:length(endid)
+0186                 j=endid(k);
+0187                 subloop=loops(seg(j)+1:seg(j+1)-1);
+0188                 fprintf(fp,<span class="string">'%d '</span>,length(subloop));
+0189                 fprintf(fp,<span class="string">'%d '</span>,subloop-1);
+0190                 fprintf(fp,<span class="string">'\n'</span>);
+0191             <span class="keyword">end</span>
+0192             <span class="keyword">for</span> k=1:length(endid)
+0193                 j=endid(k);
+0194                 subloop=loops(seg(j)+1:seg(j+1)-1);
+0195                 fprintf(fp,<span class="string">'%d %f %f %f\n'</span>,k,<a href="internalpoint.html" class="code" title="function p=internalpoint(v,aloop)">internalpoint</a>(v,subloop)); <span class="comment">%mean(v(subloop,:)));</span>
+0196             <span class="keyword">end</span>
+0197         <span class="keyword">end</span>
+0198     <span class="keyword">end</span>
+0199 <span class="keyword">end</span>
+0200 
+0201 <span class="keyword">if</span>(size(holelist,1))
+0202         fprintf(fp,<span class="string">'#hole list\n%d\n'</span>,size(holelist,1));
+0203         <span class="keyword">for</span> i=1:size(holelist,1)
+0204                 fprintf(fp,<span class="string">'%d %f %f %f\n'</span>, i, holelist(i,:));
+0205         <span class="keyword">end</span>
+0206 <span class="keyword">else</span>
+0207     fprintf(fp,<span class="string">'#hole list\n0\n'</span>);
+0208 <span class="keyword">end</span>
+0209 
+0210 <span class="keyword">if</span>(size(regionlist,1))
+0211     fprintf(fp,<span class="string">'#region list\n%d\n'</span>,size(regionlist,1));
+0212     <span class="keyword">for</span> i=1:size(regionlist,1)
+0213         fprintf(fp,<span class="string">'%d %f %f %f %d\n'</span>, i, regionlist(i,:),i);
+0214     <span class="keyword">end</span>
+0215 <span class="keyword">end</span>
+0216 fclose(fp);
+0217 
+0218 <span class="keyword">if</span>(~isempty(nodesize))
+0219     <span class="keyword">if</span>(size(nodesize,1)+size(forcebox(:),1)==size(node,1))
+0220         nodesize=[nodesize;forcebox(:)];
+0221     <span class="keyword">end</span>
+0222     fid=fopen(regexprep(fname,<span class="string">'\.poly$'</span>,<span class="string">'.mtr'</span>),<span class="string">'wt'</span>);
+0223     fprintf(fid,<span class="string">'%d 1\n'</span>,size(nodesize,1));
+0224     fprintf(fid,<span class="string">'%f\n'</span>,nodesize);
+0225     fclose(fid);
+0226 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

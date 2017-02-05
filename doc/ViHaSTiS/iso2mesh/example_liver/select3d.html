@@ -1,0 +1,450 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of select3d</title>
+  <meta name="keywords" content="select3d">
+  <meta name="description" content="SELECT3D(H) Determines the selected point in 3-D data space.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html ViHaSTiS --><!-- ../menu.html iso2mesh --><!-- menu.html example_liver -->
+<h1>select3d
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>SELECT3D(H) Determines the selected point in 3-D data space.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>function [pout, vout, viout, facevout, faceiout]  = select3d(obj) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">SELECT3D(H) Determines the selected point in 3-D data space.
+  P = SELECT3D determines the point, P, in data space corresponding
+  to the current selection position. P is a point on the first
+  patch or surface face intersected along the selection ray. If no
+  face is encountered along the selection ray, P returns empty.
+
+  P = SELECT3D(H) constrains selection to graphics handle H and,
+  if applicable, any of its children. H can be a figure, axes,
+  patch, or surface object.
+
+  [P V] = SELECT3D(...), V is the closest face or line vertex
+  selected based on the figure's current object.
+
+  [P V VI] = SELECT3D(...), VI is the index into the object's
+  x,y,zdata properties corresponding to V, the closest face vertex
+  selected.
+
+  [P V VI FACEV] = SELECT3D(...), FACE is an array of vertices
+  corresponding to the face polygon containing P and V.
+
+  [P V VI FACEV FACEI] = SELECT3D(...), FACEI is the row index into
+  the object's face array corresponding to FACE. For patch
+  objects, the face array can be obtained by doing
+  get(mypatch,'faces'). For surface objects, the face array
+  can be obtained from the output of SURF2PATCH (see
+  SURF2PATCH for more information).
+
+  RESTRICTIONS:
+  SELECT3D supports surface, patch, or line object primitives. For surface
+  and patches, the algorithm assumes non-self-intersecting planar faces.
+  For line objects, the algorithm always returns P as empty, and V will
+  be the closest vertex relative to the selection point.
+
+  Example:
+
+  h = surf(peaks);
+  zoom(10);
+  disp('Click anywhere on the surface, then hit return')
+  pause
+  [p v vi face facei] = select3d;
+  marker1 = line('xdata',p(1),'ydata',p(2),'zdata',p(3),'marker','o',...
+                 'erasemode','xor','markerfacecolor','k');
+  marker2 = line('xdata',v(1),'ydata',v(2),'zdata',v(3),'marker','o',...
+                 'erasemode','xor','markerfacecolor','k');
+  marker2 = line('erasemode','xor','xdata',face(1,:),'ydata',face(2,:),...
+                 'zdata',face(3,:),'linewidth',10);
+  disp(sprintf('\nYou clicked at\nX: %.2f\nY: %.2f\nZ: %.2f',p(1),p(2),p(3)'))
+  disp(sprintf('\nThe nearest vertex is\nX: %.2f\nY: %.2f\nZ: %.2f',v(1),v(2),v(3)'))
+
+  Version 1.3 11-11-04
+  Copyright Joe Conti 2004
+  Send comments to jconti@mathworks.com
+
+  See also GINPUT, GCO.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="inves_liver.html" class="code" title="">inves_liver</a>	</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [p] = local_Data2PixelTransform(ax,vert)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [pout, vout, viout, facevout, faceiout]  = select3d(obj)</a>
+0002     <span class="comment">%SELECT3D(H) Determines the selected point in 3-D data space.</span>
+0003     <span class="comment">%  P = SELECT3D determines the point, P, in data space corresponding</span>
+0004     <span class="comment">%  to the current selection position. P is a point on the first</span>
+0005     <span class="comment">%  patch or surface face intersected along the selection ray. If no</span>
+0006     <span class="comment">%  face is encountered along the selection ray, P returns empty.</span>
+0007     <span class="comment">%</span>
+0008     <span class="comment">%  P = SELECT3D(H) constrains selection to graphics handle H and,</span>
+0009     <span class="comment">%  if applicable, any of its children. H can be a figure, axes,</span>
+0010     <span class="comment">%  patch, or surface object.</span>
+0011     <span class="comment">%</span>
+0012     <span class="comment">%  [P V] = SELECT3D(...), V is the closest face or line vertex</span>
+0013     <span class="comment">%  selected based on the figure's current object.</span>
+0014     <span class="comment">%</span>
+0015     <span class="comment">%  [P V VI] = SELECT3D(...), VI is the index into the object's</span>
+0016     <span class="comment">%  x,y,zdata properties corresponding to V, the closest face vertex</span>
+0017     <span class="comment">%  selected.</span>
+0018     <span class="comment">%</span>
+0019     <span class="comment">%  [P V VI FACEV] = SELECT3D(...), FACE is an array of vertices</span>
+0020     <span class="comment">%  corresponding to the face polygon containing P and V.</span>
+0021     <span class="comment">%</span>
+0022     <span class="comment">%  [P V VI FACEV FACEI] = SELECT3D(...), FACEI is the row index into</span>
+0023     <span class="comment">%  the object's face array corresponding to FACE. For patch</span>
+0024     <span class="comment">%  objects, the face array can be obtained by doing</span>
+0025     <span class="comment">%  get(mypatch,'faces'). For surface objects, the face array</span>
+0026     <span class="comment">%  can be obtained from the output of SURF2PATCH (see</span>
+0027     <span class="comment">%  SURF2PATCH for more information).</span>
+0028     <span class="comment">%</span>
+0029     <span class="comment">%  RESTRICTIONS:</span>
+0030     <span class="comment">%  SELECT3D supports surface, patch, or line object primitives. For surface</span>
+0031     <span class="comment">%  and patches, the algorithm assumes non-self-intersecting planar faces.</span>
+0032     <span class="comment">%  For line objects, the algorithm always returns P as empty, and V will</span>
+0033     <span class="comment">%  be the closest vertex relative to the selection point.</span>
+0034     <span class="comment">%</span>
+0035     <span class="comment">%  Example:</span>
+0036     <span class="comment">%</span>
+0037     <span class="comment">%  h = surf(peaks);</span>
+0038     <span class="comment">%  zoom(10);</span>
+0039     <span class="comment">%  disp('Click anywhere on the surface, then hit return')</span>
+0040     <span class="comment">%  pause</span>
+0041     <span class="comment">%  [p v vi face facei] = select3d;</span>
+0042     <span class="comment">%  marker1 = line('xdata',p(1),'ydata',p(2),'zdata',p(3),'marker','o',...</span>
+0043     <span class="comment">%                 'erasemode','xor','markerfacecolor','k');</span>
+0044     <span class="comment">%  marker2 = line('xdata',v(1),'ydata',v(2),'zdata',v(3),'marker','o',...</span>
+0045     <span class="comment">%                 'erasemode','xor','markerfacecolor','k');</span>
+0046     <span class="comment">%  marker2 = line('erasemode','xor','xdata',face(1,:),'ydata',face(2,:),...</span>
+0047     <span class="comment">%                 'zdata',face(3,:),'linewidth',10);</span>
+0048     <span class="comment">%  disp(sprintf('\nYou clicked at\nX: %.2f\nY: %.2f\nZ: %.2f',p(1),p(2),p(3)'))</span>
+0049     <span class="comment">%  disp(sprintf('\nThe nearest vertex is\nX: %.2f\nY: %.2f\nZ: %.2f',v(1),v(2),v(3)'))</span>
+0050     <span class="comment">%</span>
+0051     <span class="comment">%  Version 1.3 11-11-04</span>
+0052     <span class="comment">%  Copyright Joe Conti 2004</span>
+0053     <span class="comment">%  Send comments to jconti@mathworks.com</span>
+0054     <span class="comment">%</span>
+0055     <span class="comment">%  See also GINPUT, GCO.</span>
+0056 
+0057     <span class="comment">% Output variables</span>
+0058     pout = [];
+0059     vout = [];
+0060     viout = [];
+0061     facevout = [];
+0062     faceiout = [];
+0063 
+0064     <span class="comment">% other variables</span>
+0065     ERRMSG = <span class="string">'Input argument must be a valid graphics handle'</span>;
+0066     isline = logical(0);
+0067     isperspective = logical(0);
+0068 
+0069     <span class="comment">% Parse input arguments</span>
+0070     <span class="keyword">if</span> nargin&lt;1
+0071       obj = gco;
+0072     <span class="keyword">end</span>
+0073 
+0074     <span class="keyword">if</span> isempty(obj) | ~ishandle(obj) | length(obj)~=1
+0075       error(ERRMSG);
+0076     <span class="keyword">end</span>
+0077 
+0078     <span class="comment">% if obj is a figure</span>
+0079     <span class="keyword">if</span> strcmp(get(obj,<span class="string">'type'</span>),<span class="string">'figure'</span>)
+0080       fig = obj;
+0081       ax = get(fig,<span class="string">'currentobject'</span>);
+0082       currobj = get(fig,<span class="string">'currentobject'</span>);
+0083 
+0084       <span class="comment">% bail out if not a child of the axes</span>
+0085       <span class="keyword">if</span> ~strcmp(get(get(currobj,<span class="string">'parent'</span>),<span class="string">'type'</span>),<span class="string">'axes'</span>)
+0086         <span class="keyword">return</span>;
+0087       <span class="keyword">end</span>
+0088 
+0089       <span class="comment">% if obj is an axes</span>
+0090     <span class="keyword">elseif</span> strcmp(get(obj,<span class="string">'type'</span>),<span class="string">'axes'</span>)
+0091       ax = obj;
+0092       fig = get(ax,<span class="string">'parent'</span>);
+0093       currobj = get(fig,<span class="string">'currentobject'</span>);
+0094       currax = get(currobj,<span class="string">'parent'</span>);
+0095 
+0096       <span class="comment">% Bail out if current object is under an unspecified axes</span>
+0097       <span class="keyword">if</span> ~isequal(ax,currax)
+0098         <span class="keyword">return</span>;
+0099       <span class="keyword">end</span>
+0100 
+0101       <span class="comment">% if obj is child of axes</span>
+0102     <span class="keyword">elseif</span> strcmp(get(get(obj,<span class="string">'parent'</span>),<span class="string">'type'</span>),<span class="string">'axes'</span>)
+0103       currobj = obj;
+0104       ax = get(obj,<span class="string">'parent'</span>);
+0105       fig = get(ax,<span class="string">'parent'</span>);
+0106 
+0107       <span class="comment">% Bail out</span>
+0108     <span class="keyword">else</span>
+0109       <span class="keyword">return</span>
+0110     <span class="keyword">end</span>
+0111 
+0112     axchild = currobj;
+0113     obj_type = get(axchild,<span class="string">'type'</span>);
+0114 
+0115     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0116     <span class="comment">%% Get vertex, face, and current point data %%</span>
+0117     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0118     cp = get(ax,<span class="string">'currentpoint'</span>)';
+0119 
+0120     <span class="comment">% If surface object</span>
+0121     <span class="keyword">if</span> strcmp(obj_type,<span class="string">'surface'</span>)
+0122       <span class="comment">% Get surface face and vertices</span>
+0123       fv = surf2patch(axchild);
+0124       vert = fv.vertices;
+0125       faces = fv.faces;
+0126 
+0127       <span class="comment">% If patch object</span>
+0128     <span class="keyword">elseif</span> strcmp(obj_type,<span class="string">'patch'</span>)
+0129       vert = get(axchild,<span class="string">'vertices'</span>);
+0130       faces = get(axchild,<span class="string">'faces'</span>);
+0131 
+0132       <span class="comment">% If line object</span>
+0133     <span class="keyword">elseif</span> strcmp(obj_type,<span class="string">'line'</span>)
+0134       xdata = get(axchild,<span class="string">'xdata'</span>);
+0135       ydata = get(axchild,<span class="string">'ydata'</span>);
+0136       zdata = get(axchild,<span class="string">'zdata'</span>);
+0137       vert = [xdata', ydata',zdata'];
+0138       faces = [];
+0139       isline = logical(1);
+0140 
+0141       <span class="comment">% Ignore all other objects</span>
+0142     <span class="keyword">else</span>
+0143       <span class="keyword">return</span>;
+0144     <span class="keyword">end</span>
+0145 
+0146     <span class="comment">% Add z if empty</span>
+0147     <span class="keyword">if</span> size(vert,2)==2
+0148       vert(:,3) = zeros(size(vert(:,2)));
+0149       <span class="keyword">if</span> isline
+0150         zdata = vert(:,3);
+0151       <span class="keyword">end</span>
+0152     <span class="keyword">end</span>
+0153 
+0154     <span class="comment">% NaN and Inf check</span>
+0155     nan_inf_test1 = isnan(faces) | isinf(faces);
+0156     nan_inf_test2 = isnan(vert) | isinf(vert);
+0157     <span class="keyword">if</span> any(nan_inf_test1(:)) | any(nan_inf_test2(:))
+0158       warning(sprintf(<span class="string">'%s does not support NaNs or Infs in face/vertex data.'</span>,mfilename));
+0159     <span class="keyword">end</span>
+0160 
+0161     <span class="comment">% For debugging</span>
+0162     <span class="comment">% if 0</span>
+0163     <span class="comment">%     ax1 = getappdata(ax,'testselect3d');</span>
+0164     <span class="comment">%     if isempty(ax1) | ~ishandle(ax1)</span>
+0165     <span class="comment">%         fig = figure;</span>
+0166     <span class="comment">%         ax1 = axes;</span>
+0167     <span class="comment">%         axis(ax1,'equal');</span>
+0168     <span class="comment">%         setappdata(ax,'testselect3d',ax1);</span>
+0169     <span class="comment">%     end</span>
+0170     <span class="comment">%     cla(ax1);</span>
+0171     <span class="comment">%     patch('parent',ax1,'faces',faces,'vertices',xvert','facecolor','none','edgecolor','k');</span>
+0172     <span class="comment">%     line('parent',ax1,'xdata',xcp(1,2),'ydata',xcp(2,2),'zdata',0,'marker','o','markerfacecolor','r','erasemode','xor');</span>
+0173     <span class="comment">% end</span>
+0174 
+0175     <span class="comment">% Transform vertices from data space to pixel space</span>
+0176     xvert = <a href="#_sub1" class="code" title="subfunction [p] = local_Data2PixelTransform(ax,vert)">local_Data2PixelTransform</a>(ax,vert)';
+0177     xcp = <a href="#_sub1" class="code" title="subfunction [p] = local_Data2PixelTransform(ax,vert)">local_Data2PixelTransform</a>(ax,cp')';
+0178 
+0179     <span class="comment">% Translate vertices so that the selection point is at the origin.</span>
+0180     xvert(1,:) = xvert(1,:) - xcp(1,2);
+0181     xvert(2,:) = xvert(2,:) - xcp(2,2);
+0182 
+0183     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0184     <span class="comment">%% simple algorithm (almost naive algorithm!) for line objects %%</span>
+0185     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0186     <span class="keyword">if</span> isline
+0187 
+0188       <span class="comment">% Ignoring line width and marker attributes, find closest</span>
+0189       <span class="comment">% vertex in 2-D view space.</span>
+0190       d = xvert(1,:).*xvert(1,:) + xvert(2,:).*xvert(2,:);
+0191       [val i] = min(d);
+0192       i = i(1); <span class="comment">% enforce only one output</span>
+0193 
+0194       <span class="comment">% Assign output</span>
+0195       vout = [ xdata(i) ydata(i) zdata(i)];
+0196       viout = i;
+0197 
+0198       <span class="keyword">return</span> <span class="comment">% Bail out early</span>
+0199     <span class="keyword">end</span>
+0200 
+0201     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0202     <span class="comment">%% Perform 2-D crossing test (Jordan Curve Theorem) %%</span>
+0203     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0204 
+0205     <span class="comment">% Find all vertices that have y components less than zero</span>
+0206     vert_with_negative_y = zeros(size(faces));
+0207     face_y_vert = xvert(2,faces);
+0208     ind_vert_with_negative_y = find(face_y_vert&lt;0);
+0209     vert_with_negative_y(ind_vert_with_negative_y) = logical(1);
+0210 
+0211     <span class="comment">% Find all the line segments that span the x axis</span>
+0212     is_line_segment_spanning_x = abs(diff([vert_with_negative_y, vert_with_negative_y(:,1)],1,2));
+0213 
+0214     <span class="comment">% Find all the faces that have line segments that span the x axis</span>
+0215     ind_is_face_spanning_x = find(any(is_line_segment_spanning_x,2));
+0216 
+0217     <span class="comment">% Ignore data that doesn't span the x axis</span>
+0218     candidate_faces = faces(ind_is_face_spanning_x,:);
+0219     vert_with_negative_y = vert_with_negative_y(ind_is_face_spanning_x,:);
+0220     is_line_segment_spanning_x = is_line_segment_spanning_x(ind_is_face_spanning_x,:);
+0221 
+0222     <span class="comment">% Create line segment arrays</span>
+0223     pt1 = candidate_faces;
+0224     pt2 = [candidate_faces(:,2:end), candidate_faces(:,1)];
+0225 
+0226     <span class="comment">% Point 1</span>
+0227     x1 = reshape(xvert(1,pt1),size(pt1));
+0228     y1 = reshape(xvert(2,pt1),size(pt1));
+0229 
+0230     <span class="comment">% Point 2</span>
+0231     x2 = reshape(xvert(1,pt2),size(pt2));
+0232     y2 = reshape(xvert(2,pt2),size(pt2));
+0233 
+0234     <span class="comment">% Cross product of vector to origin with line segment</span>
+0235     cross_product_test = -x1.*(y2-y1) &gt; -y1.*(x2-x1);
+0236 
+0237     <span class="comment">% Find all line segments that cross the positive x axis</span>
+0238     crossing_test = (cross_product_test==vert_with_negative_y) &amp; is_line_segment_spanning_x;
+0239 
+0240     <span class="comment">% If the number of line segments is odd, then we intersected the polygon</span>
+0241     s = sum(crossing_test,2);
+0242     s = mod(s,2);
+0243     ind_intersection_test = find(s~=0);
+0244 
+0245     <span class="comment">% Bail out early if no faces were hit</span>
+0246     <span class="keyword">if</span> isempty(ind_intersection_test)
+0247       <span class="keyword">return</span>;
+0248     <span class="keyword">end</span>
+0249 
+0250     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0251     <span class="comment">%% Plane/ray intersection test %%</span>
+0252     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0253     <span class="comment">% Perform plane/ray intersection with the faces that passed</span>
+0254     <span class="comment">% the polygon intersection tests. Grab the only the first</span>
+0255     <span class="comment">% three vertices since that is all we need to define a plane).</span>
+0256     <span class="comment">% assuming planar polygons.</span>
+0257     candidate_faces = candidate_faces(ind_intersection_test,1:3);
+0258     candidate_faces = reshape(candidate_faces',1,prod(size(candidate_faces)));
+0259     vert = vert';
+0260     candidate_facev = vert(:,candidate_faces);
+0261     candidate_facev = reshape(candidate_facev,3,3,length(ind_intersection_test));
+0262 
+0263     <span class="comment">% Get three contiguous vertices along polygon</span>
+0264     v1 = squeeze(candidate_facev(:,1,:));
+0265     v2 = squeeze(candidate_facev(:,2,:));
+0266     v3 = squeeze(candidate_facev(:,3,:));
+0267 
+0268     <span class="comment">% Get normal to face plane</span>
+0269     vec1 = [v2-v1];
+0270     vec2 = [v3-v2];
+0271     crs = cross(vec1,vec2);
+0272     mag = sqrt(sum(crs.*crs));
+0273     nplane(1,:) = crs(1,:)./mag;
+0274     nplane(2,:) = crs(2,:)./mag;
+0275     nplane(3,:) = crs(3,:)./mag;
+0276 
+0277     <span class="comment">% Compute intersection between plane and ray</span>
+0278     cp1 = cp(:,1);
+0279     cp2 = cp(:,2);
+0280     d = cp2-cp1;
+0281     dp = dot(-nplane,v1);
+0282 
+0283     <span class="comment">%A = dot(nplane,d);</span>
+0284     A(1,:) = nplane(1,:).*d(1);
+0285     A(2,:) = nplane(2,:).*d(2);
+0286     A(3,:) = nplane(3,:).*d(3);
+0287     A = sum(A,1);
+0288 
+0289     <span class="comment">%B = dot(nplane,pt1)</span>
+0290     B(1,:) = nplane(1,:).*cp1(1);
+0291     B(2,:) = nplane(2,:).*cp1(2);
+0292     B(3,:) = nplane(3,:).*cp1(3);
+0293     B = sum(B,1);
+0294 
+0295     <span class="comment">% Distance to intersection point</span>
+0296     t = (-dp-B)./A;
+0297 
+0298     <span class="comment">% Find &quot;best&quot; distance (smallest)</span>
+0299     [tbest ind_best] = min(t);
+0300 
+0301     <span class="comment">% Determine intersection point</span>
+0302     pout = cp1 + tbest .* d;
+0303 
+0304     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0305     <span class="comment">%% Assign additional output variables %%</span>
+0306     <span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+0307     <span class="keyword">if</span> nargout&gt;1
+0308 
+0309       <span class="comment">% Get face index and vertices</span>
+0310       faceiout = ind_is_face_spanning_x(ind_intersection_test(ind_best));
+0311       facevout = vert(:,faces(faceiout,:));
+0312 
+0313       <span class="comment">% Determine index of closest face vertex intersected</span>
+0314       facexv = xvert(:,faces(faceiout,:));
+0315       dist = sqrt(facexv(1,:).*facexv(1,:) +  facexv(2,:).*facexv(2,:));
+0316       min_dist = min(dist);
+0317       min_index = find(dist==min_dist);
+0318 
+0319       <span class="comment">% Get closest vertex index and vertex</span>
+0320       viout = faces(faceiout,min_index);
+0321       vout = vert(:,viout);
+0322     <span class="keyword">end</span>
+0323 
+0324     <span class="comment">%--------------------------------------------------------%</span>
+0325 <a name="_sub1" href="#_subfunctions" class="code">function [p] = local_Data2PixelTransform(ax,vert)</a>
+0326     <span class="comment">% Transform vertices from data space to pixel space.</span>
+0327 
+0328     <span class="comment">% Get needed transforms</span>
+0329     xform = get(ax,<span class="string">'x_RenderTransform'</span>);
+0330     offset = get(ax,<span class="string">'x_RenderOffset'</span>);
+0331     scale = get(ax,<span class="string">'x_RenderScale'</span>);
+0332 
+0333     <span class="comment">% Equivalent: nvert = vert/scale - offset;</span>
+0334     nvert(:,1) = vert(:,1)./scale(1) - offset(1);
+0335     nvert(:,2) = vert(:,2)./scale(2) - offset(2);
+0336     nvert(:,3) = vert(:,3)./scale(3) - offset(3);
+0337 
+0338     <span class="comment">% Equivalent xvert = xform*xvert;</span>
+0339     w = xform(4,1) * nvert(:,1) + xform(4,2) * nvert(:,2) + xform(4,3) * nvert(:,3) + xform(4,4);
+0340     xvert(:,1) = xform(1,1) * nvert(:,1) + xform(1,2) * nvert(:,2) + xform(1,3) * nvert(:,3) + xform(1,4);
+0341     xvert(:,2) = xform(2,1) * nvert(:,1) + xform(2,2) * nvert(:,2) + xform(2,3) * nvert(:,3) + xform(2,4);
+0342 
+0343     <span class="comment">% w may be 0 for perspective plots</span>
+0344     ind = find(w==0);
+0345     w(ind) = 1; <span class="comment">% avoid divide by zero warning</span>
+0346     xvert(ind,:) = 0; <span class="comment">% set pixel to 0</span>
+0347 
+0348     p(:,1) = xvert(:,1) ./ w;
+0349     p(:,2) = xvert(:,2) ./ w;</pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

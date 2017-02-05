@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of surf2mesh</title>
+  <meta name="keywords" content="surf2mesh">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html ViHaSTiS --><!-- menu.html iso2mesh -->
+<h1>surf2mesh
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)
+
+ create quality volumetric mesh from isosurface patches
+
+ author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)
+ date: 2007/11/24
+
+ input parameters:
+      v: input, isosurface node list, dimension (nn,3)
+         if v has 4 columns, the last column specifies mesh density near each node
+      f: input, isosurface face element list, dimension (be,3)
+      p0: input, coordinates of one corner of the bounding box, p0=[x0 y0 z0]
+      p1: input, coordinates of the other corner of the bounding box, p1=[x1 y1 z1]
+      keepratio: input, percentage of elements being kept after the simplification
+      maxvol: input, maximum tetrahedra element volume
+      regions: list of regions, specifying by an internal point for each region
+      holes: list of holes, similar to regions
+      forcebox: 1: add bounding box, 0: automatic
+
+ outputs:
+      node: output, node coordinates of the tetrahedral mesh
+      elem: output, element list of the tetrahedral mesh
+      face: output, mesh surface element list of the tetrahedral mesh 
+             the last column denotes the boundary ID
+
+ -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="deletemeshfile.html" class="code" title="function flag=deletemeshfile(fname)">deletemeshfile</a>	</li><li><a href="fallbackexeext.html" class="code" title="function exesuff=fallbackexeext(exesuffix, exename)">fallbackexeext</a>	</li><li><a href="getexeext.html" class="code" title="function exesuff=getexeext()">getexeext</a>	</li><li><a href="getvarfrom.html" class="code" title="function p=getvarfrom(ws,name)">getvarfrom</a>	</li><li><a href="mcpath.html" class="code" title="function binname=mcpath(fname)">mcpath</a>	</li><li><a href="meshresample.html" class="code" title="function [node,elem]=meshresample(v,f,keepratio)">meshresample</a>	</li><li><a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>	</li><li><a href="readtetgen.html" class="code" title="function [node,elem,face]=readtetgen(fstub)">readtetgen</a>	</li><li><a href="saveoff.html" class="code" title="function saveoff(v,f,fname)">saveoff</a>	</li><li><a href="savesurfpoly.html" class="code" title="function savesurfpoly(v,f,holelist,regionlist,p0,p1,fname,forcebox)">savesurfpoly</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="../../ViHaSTiS/iso2mesh/example_liver/inves_liver.html" class="code" title="">inves_liver</a>	</li><li><a href="../../ViHaSTiS/read_file.html" class="code" title="function [coord, nodes_per_elem, numb_nodes, elements,face] = read_file(filename)">read_file</a>	triang_to_tetrah - read the obj file and converts the triange elements to</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% create quality volumetric mesh from isosurface patches</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)</span>
+0008 <span class="comment">% date: 2007/11/24</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% input parameters:</span>
+0011 <span class="comment">%      v: input, isosurface node list, dimension (nn,3)</span>
+0012 <span class="comment">%         if v has 4 columns, the last column specifies mesh density near each node</span>
+0013 <span class="comment">%      f: input, isosurface face element list, dimension (be,3)</span>
+0014 <span class="comment">%      p0: input, coordinates of one corner of the bounding box, p0=[x0 y0 z0]</span>
+0015 <span class="comment">%      p1: input, coordinates of the other corner of the bounding box, p1=[x1 y1 z1]</span>
+0016 <span class="comment">%      keepratio: input, percentage of elements being kept after the simplification</span>
+0017 <span class="comment">%      maxvol: input, maximum tetrahedra element volume</span>
+0018 <span class="comment">%      regions: list of regions, specifying by an internal point for each region</span>
+0019 <span class="comment">%      holes: list of holes, similar to regions</span>
+0020 <span class="comment">%      forcebox: 1: add bounding box, 0: automatic</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">% outputs:</span>
+0023 <span class="comment">%      node: output, node coordinates of the tetrahedral mesh</span>
+0024 <span class="comment">%      elem: output, element list of the tetrahedral mesh</span>
+0025 <span class="comment">%      face: output, mesh surface element list of the tetrahedral mesh</span>
+0026 <span class="comment">%             the last column denotes the boundary ID</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">% -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</span>
+0029 <span class="comment">%</span>
+0030 
+0031 fprintf(1,<span class="string">'generating tetrahedral mesh from closed surfaces ...\n'</span>);
+0032 
+0033 exesuff=<a href="getexeext.html" class="code" title="function exesuff=getexeext()">getexeext</a>;
+0034 exesuff=<a href="fallbackexeext.html" class="code" title="function exesuff=fallbackexeext(exesuffix, exename)">fallbackexeext</a>(exesuff,<span class="string">'tetgen'</span>);
+0035 
+0036 <span class="keyword">if</span>(keepratio&gt;1 | keepratio&lt;0)
+0037    warn([<span class="string">'The &quot;keepratio&quot; parameter is required to be between 0 and 1. '</span><span class="keyword">...</span>
+0038          <span class="string">'Your input is out of this range. surf2mesh will not perform '</span><span class="keyword">...</span>
+0039      <span class="string">'simplification. Please double check to correct this.'</span>]);
+0040 <span class="keyword">end</span>
+0041 
+0042 <span class="comment">% first, resample the surface mesh with cgal</span>
+0043 <span class="keyword">if</span>(keepratio&lt;1-1e-9 &amp; ~iscell(f))
+0044     fprintf(1,<span class="string">'resampling surface mesh ...\n'</span>);
+0045     [no,el]=<a href="meshresample.html" class="code" title="function [node,elem]=meshresample(v,f,keepratio)">meshresample</a>(v(:,1:3),f(:,1:3),keepratio);
+0046     el=unique(sort(el,2),<span class="string">'rows'</span>);
+0047 
+0048     <span class="comment">% then smooth the resampled surface mesh (Laplace smoothing)</span>
+0049 
+0050     <span class="comment">%% edges=surfedge(el);  % disable on 12/05/08, very slow on octave</span>
+0051     <span class="comment">%% mask=zeros(size(no,1),1);</span>
+0052     <span class="comment">%% mask(unique(edges(:)))=1;  % =1 for edge nodes, =0 otherwise</span>
+0053     <span class="comment">%[conn,connnum,count]=meshconn(el,length(no));</span>
+0054     <span class="comment">%no=smoothsurf(no,mask,conn,2);</span>
+0055 
+0056     <span class="comment">% remove end elements (all nodes are edge nodes)</span>
+0057     <span class="comment">%el=delendelem(el,mask);</span>
+0058 <span class="keyword">else</span>
+0059     no=v;
+0060     el=f;
+0061 <span class="keyword">end</span>
+0062 <span class="keyword">if</span>(nargin==6)
+0063     regions=[];
+0064     holes=[];
+0065 <span class="keyword">elseif</span>(nargin==7)
+0066     holes=[];
+0067 <span class="keyword">end</span>
+0068 
+0069 dobbx=0;
+0070 <span class="keyword">if</span>(nargin&gt;=9)
+0071     dobbx=forcebox;
+0072 <span class="keyword">end</span>
+0073 
+0074 <span class="comment">% dump surface mesh to .poly file format</span>
+0075 <span class="keyword">if</span>(~iscell(el) &amp; ~isempty(no) &amp; ~isempty(el))
+0076     <a href="saveoff.html" class="code" title="function saveoff(v,f,fname)">saveoff</a>(no(:,1:3),el(:,1:3),<a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">'post_vmesh.off'</span>));
+0077 <span class="keyword">end</span>
+0078 <a href="deletemeshfile.html" class="code" title="function flag=deletemeshfile(fname)">deletemeshfile</a>(<a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">'post_vmesh.mtr'</span>));
+0079 <a href="savesurfpoly.html" class="code" title="function savesurfpoly(v,f,holelist,regionlist,p0,p1,fname,forcebox)">savesurfpoly</a>(no,el,holes,regions,p0,p1,<a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">'post_vmesh.poly'</span>),dobbx);
+0080 
+0081 moreopt=<span class="string">''</span>;
+0082 <span class="keyword">if</span>(size(no,2)==4)
+0083    moreopt=[moreopt <span class="string">' -m '</span>];
+0084 <span class="keyword">end</span>
+0085 <span class="comment">% call tetgen to create volumetric mesh</span>
+0086 <a href="deletemeshfile.html" class="code" title="function flag=deletemeshfile(fname)">deletemeshfile</a>(<a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">'post_vmesh.1.*'</span>));
+0087 fprintf(1,<span class="string">'creating volumetric mesh from a surface mesh ...\n'</span>);
+0088 
+0089 fprintf(1,sprintf(<span class="string">'\n%s\n%s\n'</span>,<span class="keyword">...</span>
+0090      <span class="string">'WARNING: the license for &quot;tetgen&quot; is non-free and does not permit commercial use.'</span>, <span class="keyword">...</span>
+0091      <span class="string">'Please use the &quot;cgalmesh&quot; or &quot;cgalpoly&quot; options where free-software is desired.'</span>));
+0092 
+0093 cmdopt=<a href="getvarfrom.html" class="code" title="function p=getvarfrom(ws,name)">getvarfrom</a>({<span class="string">'caller'</span>,<span class="string">'base'</span>},<span class="string">'ISO2MESH_TETGENOPT'</span>);
+0094 <span class="keyword">if</span>(isempty(cmdopt))
+0095   system([<span class="string">' &quot;'</span> <a href="mcpath.html" class="code" title="function binname=mcpath(fname)">mcpath</a>(<span class="string">'tetgen'</span>) exesuff <span class="string">'&quot; -A -q1.414a'</span> num2str(maxvol) <span class="string">' '</span> moreopt <span class="string">' &quot;'</span> <a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">'post_vmesh.poly'</span>) <span class="string">'&quot;'</span>]);
+0096 <span class="keyword">else</span>
+0097   system([<span class="string">' &quot;'</span> <a href="mcpath.html" class="code" title="function binname=mcpath(fname)">mcpath</a>(<span class="string">'tetgen'</span>) exesuff <span class="string">'&quot; '</span> cmdopt <span class="string">' &quot;'</span> <a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">'post_vmesh.poly'</span>) <span class="string">'&quot;'</span>]);
+0098 <span class="keyword">end</span>
+0099 
+0100 <span class="comment">% read in the generated mesh</span>
+0101 [node,elem,face]=<a href="readtetgen.html" class="code" title="function [node,elem,face]=readtetgen(fstub)">readtetgen</a>(<a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">'post_vmesh.1'</span>));
+0102 
+0103 fprintf(1,<span class="string">'volume mesh generation is complete\n'</span>);
+0104</pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

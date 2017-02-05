@@ -1,0 +1,400 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of ROS_omni</title>
+  <meta name="keywords" content="ROS_omni">
+  <meta name="description" content="ROS_omni - provides the interface with Phantom Omni haptic device">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html ViHaSTiS -->
+<h1>ROS_omni
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>ROS_omni - provides the interface with Phantom Omni haptic device</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function ROS_omni(coord, face, nodes_per_elem, numb_nodes, elements,young_modulus, poisson_ratio, handles_axes1, handles_axes2,window, fig, handles_disp, handles_f, handles_p) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> ROS_omni - provides the interface with Phantom Omni haptic device
+
+ Syntax:  ros_omni(coord, face, nodes_per_elem, numb_nodes, elements, ...
+      young_modulus, poisson_ratio, handles_axes1, handles_axes2, ...
+      handles_text, fig, window)
+
+
+
+ Inputs:
+    coord - matrix with coordinates of all nodes
+    face - matrix with the nodes with built the surface
+    nodes_per_elem - matrix with the nodes connecting each element
+    numb_nodes - number of nodes
+    elements - number of elements
+    young_modulus - Young Modulus
+    poisson_ratio - Poisson ratio
+    handles_axes1 - the handles of first axis
+    handles_axes2 - the handles of second axis
+    handles_text - the handles static text
+    fig - the handles of gui figure
+    window - the handles of log
+
+
+ Outputs: none
+
+
+
+ Other m-files required: none
+ Subfunctions: pose_callback(msg), button_callback(msg)
+ MAT-files required: none
+
+
+ Author: Dimitris Dounas
+ Work address: none
+ email: jdounas1992@gmail.com
+ Website: none
+ May 2015; Last revision: none</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="finite_elements.html" class="code" title="function [Ke, C, B] = finite_elements(numb_nodes, elements, coord,nodes_per_elem, young_modulus, poisson_ratio)">finite_elements</a>	finite_elements - calculate elements stiffness matrix with linear elastic</li><li><a href="force.html" class="code" title="function [f_contact, k, d_contact] = force(dipl_node,coord_find,pos_dipl_node,Inv_Kg)">force</a>	force - Find node where force applies and calculate force vector</li><li><a href="global_stiffness.html" class="code" title="function [Inv_Kg, R, num_rig] = global_stiffness(numb_nodes, coord,nodes_per_elem, elements, Ke, rigid, coord_find)">global_stiffness</a>	assemb_global_stiffnessm - calculate global stiffness matrix of soft</li><li><a href="new_vertices.html" class="code" title="function [new_vertices, e, stress] =new_vertices(Inv_Kg,d_contact, f_contact, k, C, R,elements, B, numb_nodes, nodes_per_elem, coord)">new_vertices</a>	displacem_strain_stress - calculate the new coordinates of deformed</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ViHaSTiS.html" class="code" title="function varargout = ViHaSTiS(varargin)">ViHaSTiS</a>	ViHaSTiS MATLAB code for ViHaSTiS.fig</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function pose_callback(msg)</a></li><li><a href="#_sub2" class="code">function button_callback(msg)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function ROS_omni(coord, face, nodes_per_elem, numb_nodes, elements, </a><span class="keyword">...</span>
+0002     young_modulus, poisson_ratio, handles_axes1, handles_axes2, <span class="keyword">...</span>
+0003     window, fig, handles_disp, handles_f, handles_p)
+0004 <span class="comment">% ROS_omni - provides the interface with Phantom Omni haptic device</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Syntax:  ros_omni(coord, face, nodes_per_elem, numb_nodes, elements, ...</span>
+0007 <span class="comment">%      young_modulus, poisson_ratio, handles_axes1, handles_axes2, ...</span>
+0008 <span class="comment">%      handles_text, fig, window)</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% Inputs:</span>
+0013 <span class="comment">%    coord - matrix with coordinates of all nodes</span>
+0014 <span class="comment">%    face - matrix with the nodes with built the surface</span>
+0015 <span class="comment">%    nodes_per_elem - matrix with the nodes connecting each element</span>
+0016 <span class="comment">%    numb_nodes - number of nodes</span>
+0017 <span class="comment">%    elements - number of elements</span>
+0018 <span class="comment">%    young_modulus - Young Modulus</span>
+0019 <span class="comment">%    poisson_ratio - Poisson ratio</span>
+0020 <span class="comment">%    handles_axes1 - the handles of first axis</span>
+0021 <span class="comment">%    handles_axes2 - the handles of second axis</span>
+0022 <span class="comment">%    handles_text - the handles static text</span>
+0023 <span class="comment">%    fig - the handles of gui figure</span>
+0024 <span class="comment">%    window - the handles of log</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% Outputs: none</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">%</span>
+0031 <span class="comment">% Other m-files required: none</span>
+0032 <span class="comment">% Subfunctions: pose_callback(msg), button_callback(msg)</span>
+0033 <span class="comment">% MAT-files required: none</span>
+0034 <span class="comment">%</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">% Author: Dimitris Dounas</span>
+0037 <span class="comment">% Work address: none</span>
+0038 <span class="comment">% email: jdounas1992@gmail.com</span>
+0039 <span class="comment">% Website: none</span>
+0040 <span class="comment">% May 2015; Last revision: none</span>
+0041 
+0042 <span class="comment">%------------- BEGIN CODE --------------</span>
+0043 
+0044 <span class="comment">% export ROS_IP=10.190.12.40</span>
+0045 <span class="comment">% export ROS_MASTER_URI=http://10.190.12.40:11311</span>
+0046 setenv(<span class="string">'ROS_MASTER_URI'</span>,<span class="string">'http://10.190.12.40:11311'</span>)
+0047 setenv(<span class="string">'ROS_IP'</span>,<span class="string">'10.190.12.40'</span>)
+0048 <span class="comment">% rosmatlab_AddClassPath</span>
+0049 
+0050 roscore = rosmatlab.roscore(11311);
+0051 node = rosmatlab.node(<span class="string">'phantom_omni_rosmatlab_node'</span>,<span class="string">'http://localhost:11311'</span>);
+0052 <span class="comment">% Subscribers</span>
+0053 pose_sub  = node.addSubscriber(<span class="string">'/tip_pose'</span>,<span class="string">'geometry_msgs/PoseStamped'</span>,1);
+0054 button_sub  = node.addSubscriber(<span class="string">'/button'</span>,<span class="string">'phantom_omni_pkg/PhantomButtonEvent'</span>,1);
+0055 <span class="comment">% Publishers</span>
+0056 force_pub = node.addPublisher(<span class="string">'/set_forces'</span>,<span class="string">'geometry_msgs/Vector3'</span>);
+0057 
+0058 <span class="comment">% Set linear velocity components of command</span>
+0059 msg_lin = rosmatlab.message(<span class="string">'geometry_msgs/Vector3'</span>, node);
+0060 
+0061 data = struct(<span class="string">'buttonState'</span>,[0 0],<span class="string">'tipPos'</span>,[0 0 0]);
+0062 <span class="keyword">global</span> coord_find;
+0063 coord_find = coord;
+0064 assignin(<span class="string">'base'</span>,<span class="string">'coord_find'</span>,coord_find);
+0065 
+0066 <span class="comment">% display liver model to figure 1 in Gui</span>
+0067 axes(handles_axes1);
+0068 <span class="comment">% trimesh(face,coord(:,1),coord(:,2),coord(:,3));</span>
+0069 tetramesh(nodes_per_elem,coord);
+0070 view(-60,60)
+0071 camlight;
+0072 set(get(handles_axes1, <span class="string">'XLabel'</span>), <span class="string">'String'</span>, <span class="string">'X AXIS'</span>)
+0073 set(get(handles_axes1, <span class="string">'YLabel'</span>), <span class="string">'String'</span>, <span class="string">'Y AXIS'</span>)
+0074 set(get(handles_axes1, <span class="string">'ZLabel'</span>), <span class="string">'String'</span>, <span class="string">'Z AXIS'</span>)
+0075 
+0076 
+0077 hold on
+0078 
+0079 <span class="comment">% Define global vars</span>
+0080 <span class="keyword">global</span> stop1;
+0081 stop1=0;
+0082 <span class="keyword">global</span> R;
+0083 <span class="keyword">global</span> rigid;
+0084 <span class="keyword">global</span> displ_node;
+0085 <span class="keyword">global</span> inv_Kg;
+0086 set(gcf, <span class="string">'Renderer'</span>,<span class="string">'OpenGL'</span>);
+0087 H1 = plot3(0,0,0,<span class="string">'m+:'</span>);
+0088 H3 = plot3(0,0,0,<span class="string">'k*'</span>);
+0089 axis([-0.25 0.25 -0.25 0.25 -0.25 0.25])
+0090 grid on
+0091 H2 = title(<span class="string">'Tip position (x,y,z): '</span>);
+0092 H4 = plot3(0,0,0,<span class="string">'g'</span>);
+0093 H5 = scatter3(0,0,0,<span class="string">'b*'</span>);
+0094 H6 = scatter3(0,0,0,<span class="string">'r'</span>);
+0095 
+0096 
+0097 hold off
+0098 
+0099 
+0100 
+0101 <span class="comment">% rigid point index</span>
+0102 j = 1;
+0103 index1 = 1;
+0104 <span class="comment">% finite element method.stiffness matrix of each element calculations</span>
+0105 [Ke, C, B]= <a href="finite_elements.html" class="code" title="function [Ke, C, B] = finite_elements(numb_nodes, elements, coord,nodes_per_elem, young_modulus, poisson_ratio)">finite_elements</a>(numb_nodes, elements, coord, <span class="keyword">...</span>
+0106     nodes_per_elem, young_modulus, poisson_ratio);
+0107 
+0108 <span class="comment">% Refer to Callbacks</span>
+0109 pose_sub.setOnNewMessageListeners({@<a href="#_sub1" class="code" title="subfunction pose_callback(msg)">pose_callback</a>});
+0110 button_sub.setOnNewMessageListeners({@<a href="#_sub2" class="code" title="subfunction button_callback(msg)">button_callback</a>});
+0111 
+0112 
+0113 
+0114 <span class="keyword">while</span> (stop1~=1)
+0115     str = input(<span class="string">'Press any to release workspace '</span>,<span class="string">'s'</span>);
+0116     
+0117     <span class="keyword">if</span> isempty(str)
+0118         <span class="keyword">break</span>
+0119     <span class="keyword">end</span>
+0120 <span class="keyword">end</span>
+0121 
+0122 disp(<span class="string">'See you!'</span>)
+0123 
+0124 <span class="comment">%--------------------------------------------------------------------------</span>
+0125 <span class="comment">% Pose Callback Function</span>
+0126 <span class="comment">%--------------------------------------------------------------------------</span>
+0127     <a name="_sub1" href="#_subfunctions" class="code">function pose_callback(msg)</a>
+0128         
+0129         axes(handles_axes2);
+0130         
+0131         currChar = get(fig,<span class="string">'CurrentCharacter'</span>);
+0132         <span class="keyword">if</span> isequal(currChar,char(17))
+0133             
+0134             sprintf(<span class="string">'\nDo some tidying up:\n'</span>)
+0135             sprintf(<span class="string">'Reset force'</span>)
+0136             msg_lin.setX(0);
+0137             msg_lin.setY(0);
+0138             msg_lin.setZ(0);
+0139             force_pub.publish(msg_lin);
+0140             node.delete();
+0141             clear(<span class="string">'roscore'</span>);
+0142             stop1=1;
+0143             assignin(<span class="string">'base'</span>,<span class="string">'stop1'</span>,stop1);
+0144         <span class="keyword">end</span>
+0145         
+0146         pos = msg.getPose().getPosition();
+0147         ori = msg.getPose().getOrientation();
+0148         
+0149         data.tipPos = [pos.getX(),pos.getY(),pos.getZ()];
+0150         last_button_2_state = 0;
+0151         last_button_1_state = 0;
+0152         
+0153         <span class="comment">% Find nearest node</span>
+0154         x =[face(:,1)
+0155             face(:,2)
+0156             face(:,3)];
+0157         y = unique(x);
+0158         
+0159         node_face = coord(y(:,1),:);
+0160         p = size(node_face,1);
+0161         x2 = ones(p,3);
+0162         
+0163         x2(:,1) = x2(:,1) .*data.tipPos(:,1);
+0164         x2(:,2) = x2(:,2) .*data.tipPos(:,2);
+0165         x2(:,3) = x2(:,3) .*data.tipPos(:,3);
+0166         
+0167         xi = x2(:,1)-node_face(:,1);
+0168         yi = x2(:,2)-node_face(:,2);
+0169         zi = x2(:,3)-node_face(:,3);
+0170         
+0171         squar_dis = ((xi.^2)+(yi.^2)+(zi.^2));
+0172         l = min(squar_dis);
+0173         k = squar_dis==l;
+0174         m = node_face(k,:);
+0175         
+0176         <span class="comment">% with Grey button select rigid points</span>
+0177         <span class="comment">% Debounce key press (very simplistic)</span>
+0178         <span class="keyword">if</span> (data.buttonState(2) ~= last_button_2_state)
+0179             pause(0.3)
+0180             last_button_2_state = 1;
+0181             <span class="keyword">if</span> (last_button_2_state == 1)
+0182                 sprintf(<span class="string">'\nTip position (x,y,z): %d %d %d\n'</span>,pos.getX(),<span class="keyword">...</span>
+0183                     pos.getY(),pos.getZ())
+0184              sprintf(<span class="string">'\nNearest node position (x,y,z): %d %d %d'</span>,m(:,1),<span class="keyword">...</span>
+0185                     m(:,2),m(:,3))
+0186                 
+0187                 <span class="comment">% matrix with rigid nodes coordinates</span>
+0188                 rigid(j,:)=[m(:,1) m(:,2) m(:,3)];
+0189                 j = j+1;
+0190                 assignin(<span class="string">'base'</span>,<span class="string">'rigid'</span>,rigid);
+0191                 
+0192                 fid = fopen(<span class="string">'data'</span>, <span class="string">'a+'</span>);
+0193             fprintf(fid, <span class="string">'%d %d %d %d %d %d %d\n'</span>,pos.getX(),pos.getY(),<span class="keyword">...</span>
+0194                    pos.getZ(),ori.getX(),ori.getY(),ori.getZ(),ori.getW());
+0195                 fclose(fid);
+0196             <span class="keyword">end</span>
+0197         <span class="keyword">end</span>
+0198         
+0199         <span class="comment">% with White button select node where the force applies</span>
+0200         <span class="comment">% Debounce key press (very simplistic)</span>
+0201         <span class="keyword">if</span> (data.buttonState(1) ~= last_button_1_state)
+0202             pause(0.17)
+0203             last_button_1_state = 1;
+0204             <span class="keyword">if</span> (last_button_1_state == 1)
+0205                sprintf(<span class="string">'\nTip position (x,y,z): %d %d %d\n'</span>,pos.getX(),<span class="keyword">...</span>
+0206                     pos.getY(),pos.getZ())
+0207              sprintf(<span class="string">'\nNearest node position (x,y,z): %d %d %d'</span>,m(:,1),<span class="keyword">...</span>
+0208                     m(:,2),m(:,3))
+0209                 
+0210                 <span class="comment">% mark rigid point on graph</span>
+0211           set(H5,<span class="string">'XData'</span>,rigid(:,1),<span class="string">'YData'</span>,rigid(:,2),<span class="string">'ZData'</span>,rigid(:,3));
+0212                 
+0213                 <span class="comment">% assembly global stiffness matrix.</span>
+0214              [inv_Kg, R, num_rig] = <a href="global_stiffness.html" class="code" title="function [Inv_Kg, R, num_rig] = global_stiffness(numb_nodes, coord,nodes_per_elem, elements, Ke, rigid, coord_find)">global_stiffness</a>(numb_nodes,<span class="keyword">...</span>
+0215                   coord, nodes_per_elem, elements, Ke, rigid, coord_find);
+0216                 <span class="comment">% set to gui static text the numer of fixed nodes</span>
+0217                 
+0218                 assignin(<span class="string">'base'</span>,<span class="string">'inv_Kg'</span>,inv_Kg);
+0219                 assignin(<span class="string">'base'</span>,<span class="string">'R'</span>,R);
+0220                 set(window, <span class="string">'String'</span>, char(<span class="string">'No. of rigid points: '</span>,<span class="keyword">...</span>
+0221                num2str(num_rig), <span class="string">'Rigid points (x,y,z): '</span>,num2str(rigid)));
+0222                 
+0223                 <span class="comment">% the node which will deform</span>
+0224                 displ_node = [m(:,1) m(:,2) m(:,3)]; <span class="comment">% Log window!</span>
+0225                 assignin(<span class="string">'base'</span>,<span class="string">'displ_node'</span>,displ_node);
+0226                 set(H6,<span class="string">'XData'</span>,displ_node(:,1),<span class="string">'YData'</span>,displ_node(:,2),<span class="keyword">...</span>
+0227                     <span class="string">'ZData'</span>,displ_node(:,3));
+0228                 log_buf3 = [num2str(displ_node(:,1),<span class="keyword">...</span>
+0229                     <span class="string">'%.5f'</span>) <span class="string">', '</span> num2str(displ_node(:,2),<span class="string">'%.5f'</span>) <span class="string">', '</span><span class="keyword">...</span>
+0230                     num2str(displ_node(:,3),<span class="string">'%.5f'</span>)];
+0231                 set(handles_p, <span class="string">'String'</span>, log_buf3);
+0232                 
+0233                 index1=index1+1;
+0234             <span class="keyword">end</span>
+0235         <span class="keyword">end</span>
+0236         
+0237         <span class="keyword">if</span> (index1==2)
+0238        <span class="comment">% the distance between the node which will deform and current point</span>
+0239             d_cont_legend=[pos.getX()-displ_node(:,1)<span class="keyword">...</span>
+0240                 pos.getY()-displ_node(:,2) pos.getZ()-displ_node(:,3)];
+0241             
+0242             log_buf1 = [num2str(d_cont_legend(:,1),<span class="string">'%.5f'</span>) <span class="string">', '</span><span class="keyword">...</span>
+0243                 num2str(d_cont_legend(:,2),<span class="string">'%.5f'</span>) <span class="string">', '</span><span class="keyword">...</span>
+0244                 num2str(d_cont_legend(:,3),<span class="string">'%.5f'</span>)];
+0245             set(handles_disp, <span class="string">'String'</span>, log_buf1);
+0246             
+0247             pos_dipl_node=[pos.getX() pos.getY() pos.getZ()]; <span class="comment">% Log window!</span>
+0248             
+0249             <span class="comment">%plot line between the point that user want to move the</span>
+0250             <span class="comment">%selected node and the node selected node</span>
+0251             plot_line=[pos.getX() pos.getY() pos.getZ();
+0252                 displ_node(:,1) displ_node(:,2) displ_node(:,3)];
+0253             
+0254             set(H4,<span class="string">'XData'</span>,plot_line(:,1),<span class="string">'YData'</span>,plot_line(:,2),<span class="keyword">...</span>
+0255                 <span class="string">'ZData'</span>,plot_line(:,3));
+0256             
+0257             
+0258             
+0259             <span class="comment">% calculate force vector</span>
+0260             [f_contact, k, d_contact] = <a href="force.html" class="code" title="function [f_contact, k, d_contact] = force(dipl_node,coord_find,pos_dipl_node,Inv_Kg)">force</a>(displ_node,coord_find,<span class="keyword">...</span>
+0261                 pos_dipl_node,inv_Kg);
+0262            log_buf2 = [ num2str(f_contact(1),<span class="string">'%.5f'</span>) <span class="string">', '</span> <span class="keyword">...</span>
+0263            num2str(f_contact(2),<span class="string">'%.5f'</span>) <span class="string">', '</span> num2str(f_contact(3),<span class="string">'%.5f'</span>)];
+0264            set(handles_f,<span class="string">'string'</span>,log_buf2);
+0265             
+0266             
+0267             publish the <a href="force.html" class="code" title="function [f_contact, k, d_contact] = force(dipl_node,coord_find,pos_dipl_node,Inv_Kg)">force</a> vector to Omni Phantom
+0268             <span class="keyword">if</span> max(f_contact) &lt;= 1
+0269                 msg_lin.setX(-f_contact(1));
+0270                 msg_lin.setY(-f_contact(2));
+0271                 msg_lin.setZ(-f_contact(3));
+0272                 force_pub.publish(msg_lin);
+0273             <span class="keyword">end</span>
+0274             calculate the new vertices of deformed liver model
+0275             
+0276             [<a href="new_vertices.html" class="code" title="function [new_vertices, e, stress] =new_vertices(Inv_Kg,d_contact, f_contact, k, C, R,elements, B, numb_nodes, nodes_per_elem, coord)">new_vertices</a>, e, stress] = <a href="new_vertices.html" class="code" title="function [new_vertices, e, stress] =new_vertices(Inv_Kg,d_contact, f_contact, k, C, R,elements, B, numb_nodes, nodes_per_elem, coord)">new_vertices</a>(inv_Kg, <span class="keyword">...</span>
+0277                 d_contact,f_contact,k, C, R, elements, B, numb_nodes, <span class="keyword">...</span>
+0278                 nodes_per_elem, coord) ;
+0279             
+0280             <span class="comment">% display deformed liver model to figure 2 in GUI</span>
+0281        trimesh(face,<a href="new_vertices.html" class="code" title="function [new_vertices, e, stress] =new_vertices(Inv_Kg,d_contact, f_contact, k, C, R,elements, B, numb_nodes, nodes_per_elem, coord)">new_vertices</a>(:,1),<a href="new_vertices.html" class="code" title="function [new_vertices, e, stress] =new_vertices(Inv_Kg,d_contact, f_contact, k, C, R,elements, B, numb_nodes, nodes_per_elem, coord)">new_vertices</a>(:,2),<a href="new_vertices.html" class="code" title="function [new_vertices, e, stress] =new_vertices(Inv_Kg,d_contact, f_contact, k, C, R,elements, B, numb_nodes, nodes_per_elem, coord)">new_vertices</a>(:,3));
+0282             
+0283             axis([-0.25 0.25 -0.25 0.25 -0.25 0.25])
+0284             view(-60,60);
+0285             camlight;
+0286             set(get(handles_axes2, <span class="string">'XLabel'</span>), <span class="string">'String'</span>, <span class="string">'X AXIS'</span>)
+0287             set(get(handles_axes2, <span class="string">'YLabel'</span>), <span class="string">'String'</span>, <span class="string">'Y AXIS'</span>)
+0288             set(get(handles_axes2, <span class="string">'ZLabel'</span>), <span class="string">'String'</span>, <span class="string">'Z AXIS'</span>)
+0289             
+0290         <span class="keyword">end</span>
+0291         
+0292         
+0293         <span class="comment">% Set handles to plot</span>
+0294         set(H1,<span class="string">'XData'</span>,pos.getX(),<span class="string">'YData'</span>,pos.getY(),<span class="string">'ZData'</span>,pos.getZ());
+0295         set(H2,<span class="string">'String'</span>, [<span class="string">'Tip position (x,y,z): '</span><span class="keyword">...</span>
+0296          num2str(pos.getX(),<span class="string">'%.5f'</span>) <span class="string">', '</span> num2str(pos.getY(),<span class="string">'%.5f'</span>) <span class="string">', '</span><span class="keyword">...</span>
+0297          num2str(pos.getZ(),<span class="string">'%.5f'</span>)]);
+0298         set(H3,<span class="string">'XData'</span>,m(:,1),<span class="string">'YData'</span>,m(:,2),<span class="string">'ZData'</span>,m(:,3));
+0299         
+0300     <span class="keyword">end</span>
+0301 
+0302 <span class="comment">%--------------------------------------------------------------------------</span>
+0303 <span class="comment">% Button Callback Function</span>
+0304 <span class="comment">%--------------------------------------------------------------------------</span>
+0305     <a name="_sub2" href="#_subfunctions" class="code">function button_callback(msg)</a>
+0306         button(1) = msg.getWhiteButton();
+0307         button(2) = msg.getGreyButton();
+0308         data.buttonState = button;
+0309         
+0310      <span class="comment">% Display info</span>
+0311      <span class="comment">%sprintf('\nWhite button: %d \nGrey button: %d', button(1), button(2))</span>
+0312     <span class="keyword">end</span>
+0313 
+0314 <span class="keyword">end</span> <span class="comment">%function</span>
+0315 
+0316 <span class="comment">%------------- END OF CODE --------------</span></pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

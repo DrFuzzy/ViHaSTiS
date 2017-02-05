@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of internalpoint</title>
+  <meta name="keywords" content="internalpoint">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html ViHaSTiS --><!-- menu.html iso2mesh -->
+<h1>internalpoint
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function p=internalpoint(v,aloop) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ p=internalpoint(v,aloop)
+
+ imperical function to find an internal point
+ of a planar polygon
+
+ author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)
+ date: 2008/04/08
+
+ input:   
+    v:     x,y,z coordinates of each node of the mesh
+    aloop:  input, a single vector separated by NaN, each segment
+             is a close-polygon consisted by node IDs 
+ output:
+    p:   output, [x y z] of an internal point of aloop
+
+ -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="savesurfpoly.html" class="code" title="function savesurfpoly(v,f,holelist,regionlist,p0,p1,fname,forcebox)">savesurfpoly</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function p=internalpoint(v,aloop)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% p=internalpoint(v,aloop)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% imperical function to find an internal point</span>
+0006 <span class="comment">% of a planar polygon</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)</span>
+0009 <span class="comment">% date: 2008/04/08</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% input:</span>
+0012 <span class="comment">%    v:     x,y,z coordinates of each node of the mesh</span>
+0013 <span class="comment">%    aloop:  input, a single vector separated by NaN, each segment</span>
+0014 <span class="comment">%             is a close-polygon consisted by node IDs</span>
+0015 <span class="comment">% output:</span>
+0016 <span class="comment">%    p:   output, [x y z] of an internal point of aloop</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</span>
+0019 <span class="comment">%</span>
+0020 
+0021 p=[];
+0022 nd=v(aloop,:);
+0023 boxfacet=find(sum(abs(diff(nd)))&lt;1e-2); <span class="comment">% find a flat loop</span>
+0024 <span class="keyword">if</span>(length(boxfacet))   <span class="comment">% if the loop is flat along x/y/z dir</span>
+0025      bf=boxfacet(1);    <span class="comment">% no degeneracy allowed</span>
+0026      idx=setdiff([1 2 3],bf);
+0027      
+0028      p0=(nd(1,:)+nd(2,:))/2;
+0029      pvec=complex(p0(idx(1)),p0(idx(2)));
+0030      vec=nd(2,:)-nd(1,:);
+0031      vec=complex(vec(idx(1)),vec(idx(2)))*exp(i*pi/2)*(1e-5)/sqrt(sum(vec.*vec));
+0032      testpt=[real(pvec+vec) imag(pvec+vec);real(pvec-vec) imag(pvec-vec)];
+0033      in=inpolygon(testpt(:,1),testpt(:,2), nd(:,idx(1)),nd(:,idx(2)));
+0034      p=testpt(find(in&gt;0),:);
+0035      p([bf,idx(1),idx(2)])=[nd(1,bf),p];
+0036 <span class="keyword">end</span>
+0037 
+0038 <span class="keyword">if</span>(length(p)==0|length(p)==2) 
+0039     error(<span class="string">'fail to find an internal point of curve'</span>);
+0040 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

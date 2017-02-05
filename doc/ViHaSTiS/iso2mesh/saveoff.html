@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of saveoff</title>
+  <meta name="keywords" content="saveoff">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html ViHaSTiS --><!-- menu.html iso2mesh -->
+<h1>saveoff
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function saveoff(v,f,fname) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ saveoff(v,f,fname)
+
+ save a surface mesh to Geomview Object File Format (OFF)
+
+ author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)
+ date: 2007/03/28
+
+ input:
+      v: input, surface node list, dimension (nn,3)
+      f: input, surface face element list, dimension (be,3)
+      fname: output file name
+
+ -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="meshcheckrepair.html" class="code" title="function [node,elem]=meshcheckrepair(node,elem,opt,varargin)">meshcheckrepair</a>	</li><li><a href="meshresample.html" class="code" title="function [node,elem]=meshresample(v,f,keepratio)">meshresample</a>	</li><li><a href="surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li><li><a href="../../ViHaSTiS/surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function saveoff(v,f,fname)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% saveoff(v,f,fname)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% save a surface mesh to Geomview Object File Format (OFF)</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)</span>
+0008 <span class="comment">% date: 2007/03/28</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% input:</span>
+0011 <span class="comment">%      v: input, surface node list, dimension (nn,3)</span>
+0012 <span class="comment">%      f: input, surface face element list, dimension (be,3)</span>
+0013 <span class="comment">%      fname: output file name</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</span>
+0016 <span class="comment">%</span>
+0017 
+0018 fid=fopen(fname,<span class="string">'wt'</span>);
+0019 <span class="keyword">if</span>(fid==-1)
+0020     error(<span class="string">'You do not have permission to save mesh files.'</span>);
+0021 <span class="keyword">end</span>
+0022 fprintf(fid,<span class="string">'OFF\n'</span>);
+0023 fprintf(fid,<span class="string">'%d\t%d\t%d\n'</span>,length(v),length(f),0);
+0024 fprintf(fid,<span class="string">'%f\t%f\t%f\n'</span>,v');
+0025 face=[size(f,2)*ones(size(f,1),1) f-1];
+0026 format=[repmat(<span class="string">'%d\t'</span>,1,size(face,2)-1) <span class="string">'%d\n'</span>];
+0027 fprintf(fid,format,face');
+0028 fclose(fid);
+0029</pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

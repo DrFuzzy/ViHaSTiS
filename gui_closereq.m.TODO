@@ -1,0 +1,14 @@
+function gui_closereq(src,callbackdata)
+% Close request function 
+% to display a question dialog box 
+   selection = questdlg('Quit?',...
+      'Close Request Function',...
+      'Yes','No','Yes'); 
+   switch selection, 
+      case 'Yes',
+          disp('See you!'), sprintf('\nDo some tidying up:\n'), sprintf('Reset force'), msg_lin.setX(0), msg_lin.setY(0), msg_lin.setZ(0), force_pub.publish(msg_lin), node.delete(), clear('roscore'), delete(gcf)
+      case 'No'
+      return 
+   end
+end
+

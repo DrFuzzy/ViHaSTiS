@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of readtetgen</title>
+  <meta name="keywords" content="readtetgen">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html ViHaSTiS --><!-- menu.html iso2mesh -->
+<h1>readtetgen
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [node,elem,face]=readtetgen(fstub) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ [node,elem,face]=readtetgen(fstub)
+
+ read tetgen output files
+
+ author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)
+ date: 2007/11/21
+
+ input:
+    fstub: file name stub
+
+ output:
+    node: node coordinates of the tetgen mesh
+    elem: tetrahedra element list of the tetgen mesh
+    face: surface triangles of the tetgen mesh
+
+ -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li><li><a href="../../ViHaSTiS/surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [node,elem,face]=readtetgen(fstub)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% [node,elem,face]=readtetgen(fstub)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% read tetgen output files</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)</span>
+0008 <span class="comment">% date: 2007/11/21</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% input:</span>
+0011 <span class="comment">%    fstub: file name stub</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% output:</span>
+0014 <span class="comment">%    node: node coordinates of the tetgen mesh</span>
+0015 <span class="comment">%    elem: tetrahedra element list of the tetgen mesh</span>
+0016 <span class="comment">%    face: surface triangles of the tetgen mesh</span>
+0017 <span class="comment">%</span>
+0018 <span class="comment">% -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</span>
+0019 <span class="comment">%</span>
+0020 
+0021 <span class="comment">% read node file</span>
+0022 fp=fopen([fstub,<span class="string">'.node'</span>],<span class="string">'rt'</span>);
+0023 <span class="keyword">if</span>(fp==0) 
+0024     error(<span class="string">'node file is missing!'</span>); 
+0025 <span class="keyword">end</span>
+0026 [dim,count] = fscanf(fp,<span class="string">'%d'</span>,4);
+0027 <span class="keyword">if</span>(count&lt;4) error(<span class="string">'wrong node file'</span>); <span class="keyword">end</span>
+0028 node=fscanf(fp,<span class="string">'%f'</span>,[4,dim(1)]);
+0029 idx=node(1,:);
+0030 node=node(2:4,:)';
+0031 fclose(fp);
+0032 
+0033 <span class="comment">% read element file</span>
+0034 fp=fopen([fstub,<span class="string">'.ele'</span>],<span class="string">'rt'</span>);
+0035 <span class="keyword">if</span>(fp==0) 
+0036         error(<span class="string">'elem file is missing!'</span>); 
+0037 <span class="keyword">end</span>
+0038 [dim,count] = fscanf(fp,<span class="string">'%d'</span>,3);
+0039 <span class="keyword">if</span>(count&lt;3) error(<span class="string">'wrong elem file'</span>); <span class="keyword">end</span>
+0040 elem=fscanf(fp,<span class="string">'%d'</span>,[dim(2)+dim(3)+1,dim(1)]);
+0041 elem=elem';
+0042 elem(:,1)=[];
+0043 elem(:,1:dim(2))=elem(:,1:dim(2))+(1-idx(1));
+0044 fclose(fp);
+0045 
+0046 <span class="comment">% read surface mesh file</span>
+0047 fp=fopen([fstub,<span class="string">'.face'</span>],<span class="string">'rt'</span>);
+0048 <span class="keyword">if</span>(fp==0)
+0049         error(<span class="string">'surface data file is missing!'</span>);
+0050 <span class="keyword">end</span>
+0051 [dim,count] = fscanf(fp,<span class="string">'%d'</span>,2);
+0052 <span class="keyword">if</span>(count&lt;2) error(<span class="string">'wrong surface file'</span>); <span class="keyword">end</span>
+0053 face=fscanf(fp,<span class="string">'%d'</span>,[5,dim(1)]);
+0054 face=[face(2:end-1,:)+1;face(<span class="keyword">end</span>,:)]';
+0055 fclose(fp);
+0056</pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

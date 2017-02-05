@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of deletemeshfile</title>
+  <meta name="keywords" content="deletemeshfile">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html ViHaSTiS --><!-- menu.html iso2mesh -->
+<h1>deletemeshfile
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function flag=deletemeshfile(fname) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ flag=deletemeshfile(fname)
+
+ delete a given work mesh file under the working directory
+
+ author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)
+
+ input: 
+     fname: specified file name (without path)
+
+ output:
+     flag: not used
+
+ -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="meshcheckrepair.html" class="code" title="function [node,elem]=meshcheckrepair(node,elem,opt,varargin)">meshcheckrepair</a>	</li><li><a href="meshresample.html" class="code" title="function [node,elem]=meshresample(v,f,keepratio)">meshresample</a>	</li><li><a href="surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li><li><a href="../../ViHaSTiS/surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function flag=deletemeshfile(fname)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% flag=deletemeshfile(fname)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% delete a given work mesh file under the working directory</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% input:</span>
+0010 <span class="comment">%     fname: specified file name (without path)</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">% output:</span>
+0013 <span class="comment">%     flag: not used</span>
+0014 <span class="comment">%</span>
+0015 <span class="comment">% -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</span>
+0016 <span class="comment">%</span>
+0017 
+0018 <span class="keyword">try</span>
+0019     <span class="keyword">if</span>(exist(fname)) 
+0020     delete(fname); 
+0021     <span class="keyword">end</span>
+0022 <span class="keyword">catch</span>
+0023     error([<span class="string">'You do not have permission to delete temporary files. If you are working in a multi-user '</span>,<span class="keyword">...</span>
+0024          <span class="string">'environment, such as Unix/Linux and there are other users using iso2mesh, '</span>,<span class="keyword">...</span>
+0025          <span class="string">'you may need to define ISO2MESH_SESSION=''yourstring'' to make your output '</span>,<span class="keyword">...</span>
+0026          <span class="string">'files different from others; if you do not have permission to '</span>,<a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">''</span>),<span class="keyword">...</span>
+0027          <span class="string">' as the temporary directory, you have to define ISO2MESH_TEMP=''/path/you/have/write/permission'' '</span>,<span class="keyword">...</span>
+0028          <span class="string">'in matlab/octave base workspace.'</span>]);
+0029 <span class="keyword">end</span>
+0030</pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

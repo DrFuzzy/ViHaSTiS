@@ -1,0 +1,70 @@
+# 
+# Wavefront material file
+# Converted by the DEEP Exploration  Deep Exploration 5 5.0.3.1555 Release
+# Right Hemisphere, LTD
+# http://www.righthemisphere.com/
+# 
+
+newmtl LIVER_C
+Ka 0 0 0
+Kd 1 1 1
+Ks 0.421198 0.421198 0.421198
+illum 2
+Ns 256
+map_Kd LiverC.jpg
+map_bump LiverB.jpg
+bump LiverB.jpg
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl blue
+Ka 0 0 0
+Kd 0.115317 0.411566 0.8
+Ks 0.0288292 0.102891 0.2
+illum 2
+Ns 256
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl pink
+Ka 0 0 0
+Kd 0.8 0.337639 0.518851
+Ks 0.2 0.0844097 0.129713
+illum 2
+Ns 256
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 
+
+newmtl Explorer_Default
+Ka 0.117647 0.117647 0.117647
+Kd 0.752941 0.752941 0.752941
+Ks 0.752941 0.752941 0.752941
+illum 2
+Ns 8
+map_Kd 
+map_bump 
+bump 
+map_opacity 
+map_d 
+refl 
+map_kS 
+map_kA 
+map_Ns 

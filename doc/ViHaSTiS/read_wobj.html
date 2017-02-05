@@ -1,0 +1,471 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of read_wobj</title>
+  <meta name="keywords" content="read_wobj">
+  <meta name="description" content="Read the objects from a Wavefront OBJ file">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html ViHaSTiS -->
+<h1>read_wobj
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Read the objects from a Wavefront OBJ file</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function OBJ=read_wobj(fullfilename) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Read the objects from a Wavefront OBJ file
+
+ OBJ=read_wobj(filename);
+
+ OBJ struct containing:
+
+ OBJ.vertices : Vertices coordinates
+ OBJ.vertices_texture: Texture coordinates
+ OBJ.vertices_normal : Normal vectors
+ OBJ.vertices_point  : Vertice data used for points and lines
+ OBJ.material : Parameters from external .MTL file, will contain parameters like
+           newmtl, Ka, Kd, Ks, illum, Ns, map_Ka, map_Kd, map_Ks,
+           example of an entry from the material object:
+       OBJ.material(i).type = newmtl
+       OBJ.material(i).data = 'vase_tex'
+ OBJ.objects  : Cell object with all objects in the OBJ file,
+           example of a mesh object:
+       OBJ.objects(i).type='f'
+       OBJ.objects(i).data.vertices: [n x 3 double]
+       OBJ.objects(i).data.texture:  [n x 3 double]
+       OBJ.objects(i).data.normal:   [n x 3 double]
+
+ Example,
+   OBJ=read_wobj('examples\example10.obj');
+   FV.vertices=OBJ.vertices;
+   FV.faces=OBJ.objects(3).data.vertices;
+   figure, patch(FV,'facecolor',[1 0 0]); camlight
+
+ Function is written by D.Kroon University of Twente (June 2010)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../ViHaSTiS/iso2mesh/example_liver/inves_liver.html" class="code" title="">inves_liver</a>	</li><li><a href="read_file.html" class="code" title="function [coord, nodes_per_elem, numb_nodes, elements,face] = read_file(filename)">read_file</a>	triang_to_tetrah - read the obj file and converts the triange elements to</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function twords=stringsplit(tline,tchar)</a></li><li><a href="#_sub2" class="code">function file_words=file2cellarray(filename)</a></li><li><a href="#_sub3" class="code">function [ftype fdata]=fixlines(file_words)</a></li><li><a href="#_sub4" class="code">function b=removeemptycells(a)</a></li><li><a href="#_sub5" class="code">function  objects=readmtl(filename_mtl,verbose)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function OBJ=read_wobj(fullfilename)</a>
+0002 <span class="comment">% Read the objects from a Wavefront OBJ file</span>
+0003 <span class="comment">%</span>
+0004 <span class="comment">% OBJ=read_wobj(filename);</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% OBJ struct containing:</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% OBJ.vertices : Vertices coordinates</span>
+0009 <span class="comment">% OBJ.vertices_texture: Texture coordinates</span>
+0010 <span class="comment">% OBJ.vertices_normal : Normal vectors</span>
+0011 <span class="comment">% OBJ.vertices_point  : Vertice data used for points and lines</span>
+0012 <span class="comment">% OBJ.material : Parameters from external .MTL file, will contain parameters like</span>
+0013 <span class="comment">%           newmtl, Ka, Kd, Ks, illum, Ns, map_Ka, map_Kd, map_Ks,</span>
+0014 <span class="comment">%           example of an entry from the material object:</span>
+0015 <span class="comment">%       OBJ.material(i).type = newmtl</span>
+0016 <span class="comment">%       OBJ.material(i).data = 'vase_tex'</span>
+0017 <span class="comment">% OBJ.objects  : Cell object with all objects in the OBJ file,</span>
+0018 <span class="comment">%           example of a mesh object:</span>
+0019 <span class="comment">%       OBJ.objects(i).type='f'</span>
+0020 <span class="comment">%       OBJ.objects(i).data.vertices: [n x 3 double]</span>
+0021 <span class="comment">%       OBJ.objects(i).data.texture:  [n x 3 double]</span>
+0022 <span class="comment">%       OBJ.objects(i).data.normal:   [n x 3 double]</span>
+0023 <span class="comment">%</span>
+0024 <span class="comment">% Example,</span>
+0025 <span class="comment">%   OBJ=read_wobj('examples\example10.obj');</span>
+0026 <span class="comment">%   FV.vertices=OBJ.vertices;</span>
+0027 <span class="comment">%   FV.faces=OBJ.objects(3).data.vertices;</span>
+0028 <span class="comment">%   figure, patch(FV,'facecolor',[1 0 0]); camlight</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">% Function is written by D.Kroon University of Twente (June 2010)</span>
+0031 
+0032 verbose=true;
+0033 
+0034 <span class="keyword">if</span>(exist(<span class="string">'fullfilename'</span>,<span class="string">'var'</span>)==0)
+0035     [filename, filefolder] = uigetfile(<span class="string">'*.obj'</span>, <span class="string">'Read obj-file'</span>);
+0036     fullfilename = [filefolder filename];
+0037 <span class="keyword">end</span>
+0038 filefolder = fileparts( fullfilename);
+0039 <span class="keyword">if</span>(verbose),disp([<span class="string">'Reading Object file : '</span> fullfilename]); <span class="keyword">end</span>
+0040 
+0041 
+0042 <span class="comment">% Read the DI3D OBJ textfile to a cell array</span>
+0043 file_words = <a href="#_sub2" class="code" title="subfunction file_words=file2cellarray(filename)">file2cellarray</a>( fullfilename);
+0044 <span class="comment">% Remove empty cells, merge lines split by &quot;\&quot; and convert strings with values to double</span>
+0045 [ftype fdata]= <a href="#_sub3" class="code" title="subfunction [ftype fdata]=fixlines(file_words)">fixlines</a>(file_words);
+0046 
+0047 <span class="comment">% Vertex data</span>
+0048 vertices=[]; nv=0;
+0049 vertices_texture=[]; nvt=0;
+0050 vertices_point=[]; nvp=0;
+0051 vertices_normal=[]; nvn=0;
+0052 material=[];
+0053 
+0054 <span class="comment">% Surface data</span>
+0055 no=0;
+0056 
+0057 <span class="comment">% Loop through the Wavefront object file</span>
+0058 <span class="keyword">for</span> iline=1:length(ftype)
+0059     <span class="keyword">if</span>(mod(iline,10000)==0),
+0060         <span class="keyword">if</span>(verbose),disp([<span class="string">'Lines processed : '</span> num2str(iline)]); <span class="keyword">end</span>
+0061     <span class="keyword">end</span>
+0062     
+0063     type=ftype{iline}; data=fdata{iline};
+0064     
+0065     <span class="comment">% Switch on data type line</span>
+0066     <span class="keyword">switch</span>(type)
+0067         <span class="keyword">case</span>{<span class="string">'mtllib'</span>}
+0068             <span class="keyword">if</span>(iscell(data))
+0069                 datanew=[];
+0070                 <span class="keyword">for</span> i=1:length(data)
+0071                     datanew=[datanew data{i}];
+0072                     <span class="keyword">if</span>(i&lt;length(data)), datanew=[datanew <span class="string">' '</span>]; <span class="keyword">end</span>
+0073                 <span class="keyword">end</span>
+0074                 data=datanew;
+0075             <span class="keyword">end</span>
+0076             
+0077             filename_mtl=fullfile(filefolder,data);
+0078             material=<a href="#_sub5" class="code" title="subfunction  objects=readmtl(filename_mtl,verbose)">readmtl</a>(filename_mtl,verbose);
+0079         <span class="keyword">case</span>(<span class="string">'v'</span>) <span class="comment">% vertices</span>
+0080             nv=nv+1;
+0081             <span class="keyword">if</span>(length(data)==3)
+0082                 <span class="comment">% Reserve block of memory</span>
+0083                 <span class="keyword">if</span>(mod(nv,10000)==1), vertices(nv+1:nv+10001,1:3)=0; <span class="keyword">end</span>
+0084                 <span class="comment">% Add to vertices list X Y Z</span>
+0085                 vertices(nv,1:3)=data;
+0086             <span class="keyword">else</span>
+0087                 <span class="comment">% Reserve block of memory</span>
+0088                 <span class="keyword">if</span>(mod(nv,10000)==1), vertices(nv+1:nv+10001,1:4)=0; <span class="keyword">end</span>
+0089                 <span class="comment">% Add to vertices list X Y Z W</span>
+0090                 vertices(nv,1:4)=data;
+0091             <span class="keyword">end</span>
+0092         <span class="keyword">case</span>(<span class="string">'vp'</span>)
+0093             <span class="comment">% Specifies a point in the parameter space of curve or surface</span>
+0094             nvp=nvp+1;
+0095             <span class="keyword">if</span>(length(data)==1)
+0096                 <span class="comment">% Reserve block of memory</span>
+0097                 <span class="keyword">if</span>(mod(nvp,10000)==1), vertices_point(nvp+1:nvp+10001,1)=0; <span class="keyword">end</span>
+0098                 <span class="comment">% Add to vertices point list U</span>
+0099                 vertices_point(nvp,1)=data;
+0100             <span class="keyword">elseif</span>(length(data)==2)
+0101                 <span class="comment">% Reserve block of memory</span>
+0102                 <span class="keyword">if</span>(mod(nvp,10000)==1), vertices_point(nvp+1:nvp+10001,1:2)=0; <span class="keyword">end</span>
+0103                 <span class="comment">% Add to vertices point list U V</span>
+0104                 vertices_point(nvp,1:2)=data;
+0105             <span class="keyword">else</span>
+0106                 <span class="comment">% Reserve block of memory</span>
+0107                 <span class="keyword">if</span>(mod(nvp,10000)==1), vertices_point(nvp+1:nvp+10001,1:3)=0; <span class="keyword">end</span>
+0108                 <span class="comment">% Add to vertices point list U V W</span>
+0109                 vertices_point(nvp,1:3)=data;
+0110             <span class="keyword">end</span>
+0111         <span class="keyword">case</span>(<span class="string">'vn'</span>)
+0112             <span class="comment">% A normal vector</span>
+0113             nvn=nvn+1; <span class="keyword">if</span>(mod(nvn,10000)==1),  vertices_normal(nvn+1:nvn+10001,1:3)=0; <span class="keyword">end</span>
+0114             <span class="comment">% Add to vertices list I J K</span>
+0115             vertices_normal(nvn,1:3)=data;
+0116         <span class="keyword">case</span>(<span class="string">'vt'</span>)
+0117             <span class="comment">% Vertices Texture Coordinate in photo</span>
+0118             <span class="comment">% U V W</span>
+0119             nvt=nvt+1;
+0120             <span class="keyword">if</span>(length(data)==1)
+0121                 <span class="comment">% Reserve block of memory</span>
+0122                 <span class="keyword">if</span>(mod(nvt,10000)==1), vertices_texture(nvt+1:nvt+10001,1)=0; <span class="keyword">end</span>
+0123                 <span class="comment">% Add to vertices texture list U</span>
+0124                 vertices_texture(nvt,1)=data;
+0125             <span class="keyword">elseif</span>(length(data)==2)
+0126                 <span class="comment">% Reserve block of memory</span>
+0127                 <span class="keyword">if</span>(mod(nvt,10000)==1), vertices_texture(nvt+1:nvt+10001,1:2)=0; <span class="keyword">end</span>
+0128                 <span class="comment">% Add to vertices texture list U V</span>
+0129                 vertices_texture(nvt,1:2)=data;
+0130             <span class="keyword">else</span>
+0131                 <span class="comment">% Reserve block of memory</span>
+0132                 <span class="keyword">if</span>(mod(nvt,10000)==1), vertices_texture(nvt+1:nvt+10001,1:3)=0; <span class="keyword">end</span>
+0133                 <span class="comment">% Add to vertices texture list U V W</span>
+0134                 vertices_texture(nvt,1:3)=data;
+0135             <span class="keyword">end</span>
+0136         <span class="keyword">case</span>(<span class="string">'l'</span>)
+0137             no=no+1; <span class="keyword">if</span>(mod(no,10000)==1), objects(no+10001).data=0; <span class="keyword">end</span>
+0138             array_vertices=[];
+0139             array_texture=[];
+0140             <span class="keyword">for</span> i=1:length(data),
+0141                 <span class="keyword">switch</span> class(data)
+0142                     <span class="keyword">case</span> <span class="string">'cell'</span>
+0143                         tvals=str2double(<a href="#_sub1" class="code" title="subfunction twords=stringsplit(tline,tchar)">stringsplit</a>(data{i},<span class="string">'/'</span>));
+0144                     <span class="keyword">case</span> <span class="string">'string'</span>
+0145                         tvals=str2double(<a href="#_sub1" class="code" title="subfunction twords=stringsplit(tline,tchar)">stringsplit</a>(data,<span class="string">'/'</span>));
+0146                     <span class="keyword">otherwise</span>
+0147                         tvals=data(i);
+0148                 <span class="keyword">end</span>
+0149                 val=tvals(1);
+0150                 <span class="keyword">if</span>(val&lt;0), val=val+1+nv; <span class="keyword">end</span>
+0151                 array_vertices(i)=val;
+0152                 <span class="keyword">if</span>(length(tvals)&gt;1),
+0153                     val=tvals(2);
+0154                     <span class="keyword">if</span>(val&lt;0), val=val+1+nvt; <span class="keyword">end</span>
+0155                     array_texture(i)=val;
+0156                 <span class="keyword">end</span>
+0157             <span class="keyword">end</span>
+0158             objects(no).type=<span class="string">'l'</span>;
+0159             objects(no).data.vertices=array_vertices;
+0160             objects(no).data.texture=array_texture;
+0161         <span class="keyword">case</span>(<span class="string">'f'</span>)
+0162             no=no+1; <span class="keyword">if</span>(mod(no,10000)==1), objects(no+10001).data=0; <span class="keyword">end</span>
+0163             array_vertices=[];
+0164             array_texture=[];
+0165             array_normal=[];
+0166             <span class="keyword">for</span> i=1:length(data);
+0167                 <span class="keyword">switch</span> class(data)
+0168                     <span class="keyword">case</span> <span class="string">'cell'</span>
+0169                         tvals=str2double(<a href="#_sub1" class="code" title="subfunction twords=stringsplit(tline,tchar)">stringsplit</a>(data{i},<span class="string">'/'</span>));
+0170                     <span class="keyword">case</span> <span class="string">'string'</span>
+0171                         tvals=str2double(<a href="#_sub1" class="code" title="subfunction twords=stringsplit(tline,tchar)">stringsplit</a>(data,<span class="string">'/'</span>));
+0172                     <span class="keyword">otherwise</span>
+0173                         tvals=data(i);
+0174                 <span class="keyword">end</span>
+0175                 val=tvals(1);
+0176                 
+0177                 <span class="keyword">if</span>(val&lt;0), val=val+1+nv; <span class="keyword">end</span>
+0178                 array_vertices(i)=val;
+0179                 <span class="keyword">if</span>(length(tvals)&gt;1),
+0180                     <span class="keyword">if</span>(isfinite(tvals(2)))
+0181                         val=tvals(2);
+0182                         <span class="keyword">if</span>(val&lt;0), val=val+1+nvt; <span class="keyword">end</span>
+0183                         array_texture(i)=val;
+0184                     <span class="keyword">end</span>
+0185                 <span class="keyword">end</span>
+0186                 <span class="keyword">if</span>(length(tvals)&gt;2),
+0187                     val=tvals(3);
+0188                     <span class="keyword">if</span>(val&lt;0), val=val+1+nvn; <span class="keyword">end</span>
+0189                     array_normal(i)=val;
+0190                 <span class="keyword">end</span>
+0191             <span class="keyword">end</span>
+0192             
+0193             <span class="comment">% A face of more than 3 indices is always split into</span>
+0194             <span class="comment">% multiple faces of only 3 indices.</span>
+0195             objects(no).type=<span class="string">'f'</span>;
+0196             findex=1:min (3,length(array_vertices));
+0197            
+0198             objects(no).data.vertices=array_vertices(findex);
+0199             <span class="keyword">if</span>(~isempty(array_texture)),objects(no).data.texture=array_texture(findex); <span class="keyword">end</span>
+0200             <span class="keyword">if</span>(~isempty(array_normal)),objects(no).data.normal=array_normal(findex); <span class="keyword">end</span>
+0201             <span class="keyword">for</span> i=1:length(array_vertices)-3;
+0202                 no=no+1; <span class="keyword">if</span>(mod(no,10000)==1), objects(no+10001).data=0; <span class="keyword">end</span>
+0203                 findex=[1 2+i 3+i];
+0204                 findex(findex&gt;length(array_vertices))=findex(findex&gt;length(array_vertices))-length(array_vertices);
+0205                 objects(no).type=<span class="string">'f'</span>;
+0206                 objects(no).data.vertices=array_vertices(findex);
+0207                 <span class="keyword">if</span>(~isempty(array_texture)),objects(no).data.texture=array_texture(findex); <span class="keyword">end</span>
+0208                 <span class="keyword">if</span>(~isempty(array_normal)),objects(no).data.normal=array_normal(findex); <span class="keyword">end</span>
+0209             <span class="keyword">end</span>
+0210         <span class="keyword">case</span>{<span class="string">'#'</span>,<span class="string">'$'</span>}
+0211             <span class="comment">% Comment</span>
+0212             tline=<span class="string">'  %'</span>; 
+0213             <span class="keyword">if</span>(iscell(data))
+0214                 <span class="keyword">for</span> i=1:length(data), tline=[tline <span class="string">' '</span> data{i}]; <span class="keyword">end</span>
+0215             <span class="keyword">else</span>
+0216                 tline=[tline data];
+0217             <span class="keyword">end</span>
+0218             <span class="keyword">if</span>(verbose), disp(tline); <span class="keyword">end</span>
+0219         <span class="keyword">case</span>{<span class="string">''</span>}
+0220         <span class="keyword">otherwise</span>
+0221             no=no+1;
+0222             <span class="keyword">if</span>(mod(no,10000)==1), objects(no+10001).data=0; <span class="keyword">end</span>
+0223             objects(no).type=type;
+0224             objects(no).data=data;
+0225     <span class="keyword">end</span>
+0226 <span class="keyword">end</span>
+0227 
+0228 <span class="comment">% Initialize new object list, which will contain the &quot;collapsed&quot; objects</span>
+0229 objects2(no).data=0;
+0230 
+0231 index=0;
+0232 
+0233 i=0;
+0234 <span class="keyword">while</span> (i&lt;no), i=i+1;
+0235     type=objects(i).type;
+0236     <span class="comment">% First face found</span>
+0237     <span class="keyword">if</span>((length(type)==1)&amp;&amp;(type(1)==<span class="string">'f'</span>))
+0238         <span class="comment">% Get number of faces</span>
+0239         <span class="keyword">for</span> j=i:no
+0240             type=objects(j).type;
+0241             <span class="keyword">if</span>((length(type)~=1)||(type(1)~=<span class="string">'f'</span>))
+0242                 j=j-1; <span class="keyword">break</span>;
+0243             <span class="keyword">end</span>
+0244         <span class="keyword">end</span>
+0245         numfaces=(j-i)+1;
+0246         
+0247         index=index+1;
+0248         objects2(index).type=<span class="string">'f'</span>;
+0249         <span class="comment">% Process last face first to allocate memory</span>
+0250         objects2(index).data.vertices(numfaces,:)= objects(i).data.vertices;
+0251         <span class="keyword">if</span>(isfield(objects(i).data,<span class="string">'texture'</span>))
+0252             objects2(index).data.texture(numfaces,:) = objects(i).data.texture;
+0253         <span class="keyword">else</span>
+0254             objects2(index).data.texture=[];
+0255         <span class="keyword">end</span>
+0256         <span class="keyword">if</span>(isfield(objects(i).data,<span class="string">'normal'</span>))
+0257             objects2(index).data.normal(numfaces,:)  = objects(i).data.normal;
+0258         <span class="keyword">else</span>
+0259             objects2(index).data.normal=[];
+0260         <span class="keyword">end</span>
+0261         <span class="comment">% All faces to arrays</span>
+0262         <span class="keyword">for</span> k=1:numfaces
+0263             objects2(index).data.vertices(k,:)= objects(i+k-1).data.vertices;
+0264             <span class="keyword">if</span>(isfield(objects(i).data,<span class="string">'texture'</span>))
+0265                 objects2(index).data.texture(k,:) = objects(i+k-1).data.texture;
+0266             <span class="keyword">end</span>
+0267             <span class="keyword">if</span>(isfield(objects(i).data,<span class="string">'normal'</span>))
+0268                 objects2(index).data.normal(k,:)  = objects(i+k-1).data.normal;
+0269             <span class="keyword">end</span>
+0270         <span class="keyword">end</span>
+0271         i=j;
+0272     <span class="keyword">else</span>
+0273         index=index+1;
+0274         objects2(index).type=objects(i).type;
+0275         objects2(index).data=objects(i).data;
+0276     <span class="keyword">end</span>
+0277 <span class="keyword">end</span>
+0278 
+0279 <span class="comment">% Add all data to output struct</span>
+0280 OBJ.objects=objects2(1:index);
+0281 OBJ.material=material;
+0282 OBJ.vertices=vertices(1:nv,:);
+0283 OBJ.vertices_point=vertices_point(1:nvp,:);
+0284 OBJ.vertices_normal=vertices_normal(1:nvn,:);
+0285 OBJ.vertices_texture=vertices_texture(1:nvt,:);
+0286 <span class="keyword">if</span>(verbose),disp(<span class="string">'Finished Reading Object file'</span>); <span class="keyword">end</span>
+0287 
+0288 
+0289 <a name="_sub1" href="#_subfunctions" class="code">function twords=stringsplit(tline,tchar)</a>
+0290 <span class="comment">% Get start and end position of all &quot;words&quot; separated by a char</span>
+0291 i=find(tline(2:end-1)==tchar)+1; i_start=[1 i+1]; i_end=[i-1 length(tline)];
+0292 <span class="comment">% Create a cell array of the words</span>
+0293 twords=cell(1,length(i_start)); <span class="keyword">for</span> j=1:length(i_start), twords{j}=tline(i_start(j):i_end(j)); <span class="keyword">end</span>
+0294 
+0295 <a name="_sub2" href="#_subfunctions" class="code">function file_words=file2cellarray(filename)</a>
+0296 <span class="comment">% Open a DI3D OBJ textfile</span>
+0297 fid=fopen(filename,<span class="string">'r'</span>);
+0298 file_text=fread(fid, inf, <span class="string">'uint8=&gt;char'</span>)';
+0299 fclose(fid);
+0300 file_lines = regexp(file_text, <span class="string">'\n+'</span>, <span class="string">'split'</span>);
+0301 file_words = regexp(file_lines, <span class="string">'\s+'</span>, <span class="string">'split'</span>);
+0302 
+0303 <a name="_sub3" href="#_subfunctions" class="code">function [ftype fdata]=fixlines(file_words)</a>
+0304 ftype=cell(size(file_words));
+0305 fdata=cell(size(file_words));
+0306 
+0307 iline=0; jline=0;
+0308 <span class="keyword">while</span>(iline&lt;length(file_words))
+0309     iline=iline+1;
+0310     twords=<a href="#_sub4" class="code" title="subfunction b=removeemptycells(a)">removeemptycells</a>(file_words{iline});
+0311     <span class="keyword">if</span>(~isempty(twords))
+0312         <span class="comment">% Add next line to current line when line end with '\'</span>
+0313         <span class="keyword">while</span>(strcmp(twords{end},<span class="string">'\'</span>)&amp;&amp;iline&lt;length(file_words))
+0314             iline=iline+1;
+0315             twords(end)=[];
+0316             twords=[twords <a href="#_sub4" class="code" title="subfunction b=removeemptycells(a)">removeemptycells</a>(file_words{iline})];
+0317         <span class="keyword">end</span>
+0318         <span class="comment">% Values to double</span>
+0319         
+0320         type=twords{1};
+0321         stringdold=true;
+0322         j=0;
+0323         <span class="keyword">switch</span>(type)
+0324             <span class="keyword">case</span>{<span class="string">'#'</span>,<span class="string">'$'</span>}
+0325                 <span class="keyword">for</span> i=2:length(twords)
+0326                     j=j+1; twords{j}=twords{i};                    
+0327                 <span class="keyword">end</span>    
+0328             <span class="keyword">otherwise</span>    
+0329                 <span class="keyword">for</span> i=2:length(twords)
+0330                     str=twords{i};
+0331                     val=str2double(str);
+0332                     stringd=~isfinite(val);
+0333                     <span class="keyword">if</span>(stringd)
+0334                         j=j+1; twords{j}=str;
+0335                     <span class="keyword">else</span>
+0336                         <span class="keyword">if</span>(stringdold)
+0337                             j=j+1; twords{j}=val;
+0338                         <span class="keyword">else</span>
+0339                             twords{j}=[twords{j} val];    
+0340                         <span class="keyword">end</span>
+0341                     <span class="keyword">end</span>
+0342                     stringdold=stringd;
+0343                 <span class="keyword">end</span>
+0344         <span class="keyword">end</span>
+0345         twords(j+1:end)=[];
+0346         jline=jline+1;
+0347         ftype{jline}=type;
+0348         <span class="keyword">if</span>(length(twords)==1), twords=twords{1}; <span class="keyword">end</span>
+0349         fdata{jline}=twords;
+0350     <span class="keyword">end</span>
+0351 <span class="keyword">end</span>
+0352 ftype(jline+1:end)=[];
+0353 fdata(jline+1:end)=[];
+0354 
+0355 <a name="_sub4" href="#_subfunctions" class="code">function b=removeemptycells(a)</a>
+0356 j=0; b={};
+0357 <span class="keyword">for</span> i=1:length(a);
+0358     <span class="keyword">if</span>(~isempty(a{i})),j=j+1; b{j}=a{i}; <span class="keyword">end</span>;
+0359 <span class="keyword">end</span>
+0360 
+0361 <a name="_sub5" href="#_subfunctions" class="code">function  objects=readmtl(filename_mtl,verbose)</a>
+0362 <span class="keyword">if</span>(verbose),disp([<span class="string">'Reading Material file : '</span> filename_mtl]); <span class="keyword">end</span>
+0363 file_words=<a href="#_sub2" class="code" title="subfunction file_words=file2cellarray(filename)">file2cellarray</a>(filename_mtl);
+0364 <span class="comment">% Remove empty cells, merge lines split by &quot;\&quot; and convert strings with values to double</span>
+0365 [ftype fdata]= <a href="#_sub3" class="code" title="subfunction [ftype fdata]=fixlines(file_words)">fixlines</a>(file_words);
+0366 
+0367 <span class="comment">% Surface data</span>
+0368 objects.type(length(ftype))=0; 
+0369 objects.data(length(ftype))=0; 
+0370 no=0;
+0371 <span class="comment">% Loop through the Wavefront object file</span>
+0372 <span class="keyword">for</span> iline=1:length(ftype)
+0373   type=ftype{iline}; data=fdata{iline};
+0374     
+0375     <span class="comment">% Switch on data type line</span>
+0376     <span class="keyword">switch</span>(type)
+0377         <span class="keyword">case</span>{<span class="string">'#'</span>,<span class="string">'$'</span>}
+0378             <span class="comment">% Comment</span>
+0379             tline=<span class="string">'  %'</span>; 
+0380             <span class="keyword">if</span>(iscell(data))
+0381                 <span class="keyword">for</span> i=1:length(data), tline=[tline <span class="string">' '</span> data{i}]; <span class="keyword">end</span>
+0382             <span class="keyword">else</span>
+0383                 tline=[tline data];
+0384             <span class="keyword">end</span>
+0385             <span class="keyword">if</span>(verbose), disp(tline); <span class="keyword">end</span>
+0386         <span class="keyword">case</span>{<span class="string">''</span>}
+0387         <span class="keyword">otherwise</span>
+0388             no=no+1;
+0389             <span class="keyword">if</span>(mod(no,10000)==1), objects(no+10001).data=0; <span class="keyword">end</span>
+0390             objects(no).type=type;
+0391             objects(no).data=data;
+0392     <span class="keyword">end</span>
+0393 <span class="keyword">end</span>
+0394 objects=objects(1:no);
+0395 <span class="keyword">if</span>(verbose),disp(<span class="string">'Finished Reading Material file'</span>); <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

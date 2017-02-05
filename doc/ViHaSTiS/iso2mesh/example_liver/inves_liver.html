@@ -1,0 +1,621 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of inves_liver</title>
+  <meta name="keywords" content="inves_liver">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../../menu.html ViHaSTiS --><!-- ../menu.html iso2mesh --><!-- menu.html example_liver -->
+<h1>inves_liver
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre class="comment"></pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+<li><a href="select3d.html" class="code" title="function [pout, vout, viout, facevout, faceiout]  = select3d(obj)">select3d</a>	SELECT3D(H) Determines the selected point in 3-D data space.</li><li><a href="../../../ViHaSTiS/iso2mesh/surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li><li><a href="../../../ViHaSTiS/new_vertices.html" class="code" title="function [new_vertices, e, stress] =new_vertices(Inv_Kg,d_contact, f_contact, k, C, R,elements, B, numb_nodes, nodes_per_elem, coord)">new_vertices</a>	displacem_strain_stress - calculate the new coordinates of deformed</li><li><a href="../../../ViHaSTiS/read_wobj.html" class="code" title="function OBJ=read_wobj(fullfilename)">read_wobj</a>	Read the objects from a Wavefront OBJ file</li><li><a href="../../../ViHaSTiS/surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../../up.png"></a></h2>
+<div class="fragment"><pre>0001 
+0002 
+0003 clear all;
+0004 clc;
+0005 
+0006 
+0007 <span class="comment">% % anoigma tou Obj arxeiou me thn sunartish read_wobj</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% OBJ=read_wobj('FJ3153_BP7865_FMA7488_Xiphoid process.obj');</span>
+0010 <span class="comment">%</span>
+0011 <span class="comment">% % FV.vertices=OBJ.vertices;</span>
+0012 <span class="comment">% %     FV.faces=OBJ.objects(3).data.vertices;</span>
+0013 <span class="comment">% %     figure(3), patch(FV,'facecolor',[1 0 0]); camlight</span>
+0014 <span class="comment">% % metegora twn suntetagmenwn twn dianismatwn(x,y,z</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% x = OBJ.vertices(:,1);</span>
+0017 <span class="comment">% y = OBJ.vertices(:,2);</span>
+0018 <span class="comment">% z = OBJ.vertices(:,3);</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% % allagh ths montelopoihshw apo trigwna se tetraedra</span>
+0021 <span class="comment">% dt = delaunayTriangulation(x,y,z);</span>
+0022 <span class="comment">% % ta nea elements pou dhmiourgithikan</span>
+0023 <span class="comment">% nodes_per_elem(:,:)= dt(:,:);</span>
+0024 <span class="comment">% % oi kainourgies suntetagmenes</span>
+0025 <span class="comment">% corr(:,:) = [x(:) y(:) z(:)];</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">% % apeikonish tou arxikou montelou</span>
+0028 <span class="comment">%</span>
+0029 <span class="comment">%</span>
+0030 <span class="comment">% % FV.vertices=OBJ.vertices;</span>
+0031 <span class="comment">% %     FV.faces=nodes_per_elem(:,:);</span>
+0032 <span class="comment">% %     figure(4), patch(FV,'facecolor',[1 0 0]); camlight</span>
+0033 <span class="comment">% % arithmos twn kombwn</span>
+0034 <span class="comment">% numb_nodes=size(corr,1);</span>
+0035 <span class="comment">%</span>
+0036 <span class="comment">% %arithmos twn stoixeivn</span>
+0037 <span class="comment">% elements=size(nodes_per_elem,1);</span>
+0038 <span class="comment">%</span>
+0039 
+0040 
+0041 
+0042 
+0043 
+0044 <span class="comment">% load liver.mat</span>
+0045 <span class="comment">%</span>
+0046  OBJ=<a href="../../../ViHaSTiS/read_wobj.html" class="code" title="function OBJ=read_wobj(fullfilename)">read_wobj</a>(<span class="string">'DL3D_LiverExternal.obj'</span>);
+0047 
+0048 x = OBJ.vertices(:,1);
+0049 y = OBJ.vertices(:,2);
+0050 z = OBJ.vertices(:,3);
+0051 m=size(x,1);
+0052 v=[x y z];
+0053 f=OBJ.objects(3).data.vertices;
+0054 [node,elem,face]=<a href="../../../ViHaSTiS/iso2mesh/surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>(v,f,[1 1 1],[100 100 100],0.1,25);
+0055 <span class="comment">% corr=corr;</span>
+0056 <span class="comment">% faces=face;</span>
+0057 <span class="comment">% nodes_per_elem=nodes_per_elem;</span>
+0058 
+0059 <span class="comment">% x=(corr*0.01);</span>
+0060 
+0061 nodes_per_elem=[elem(:,1) elem(:,2) elem(:,3) elem(:,4)] ;
+0062 corr= 0.05*node;
+0063 <span class="comment">% corr=x;</span>
+0064 faces=[face(:,1) face(:,2) face(:,3)];
+0065 numb_nodes=size(corr,1);
+0066 elements=size(nodes_per_elem,1);
+0067 
+0068 figure (1)
+0069 
+0070   tetramesh(nodes_per_elem,corr);
+0071   axis([-0.25 0.25 -0.25 0.25 -0.25 0.25])
+0072 <span class="comment">% tetramesh(nodes_per_elem,corr,'Facecolor',vector);</span>
+0073 <span class="comment">%  axis([-2.5 2.5 -2.5 2.5 -2.5 2.5 ])</span>
+0074 
+0075 
+0076  camlight
+0077 <span class="comment">% view(270,0);</span>
+0078 <span class="comment">% axis([-0.05 0.05 -0.05 0.1 -0.1 0.1])</span>
+0079 <span class="comment">%  h=tetramesh(nodes_per_elem,corr);</span>
+0080 
+0081 <span class="comment">% ax1=get(h,'Children');</span>
+0082 
+0083 <span class="comment">%    -0.0487    0.0960   -0.0129    0.1585    0.0402    0.1315</span>
+0084 <span class="comment">% axis tight</span>
+0085 <span class="comment">% limitb=axis;</span>
+0086 <span class="comment">% clear axis;</span>
+0087 <span class="comment">%material matrix</span>
+0088 <span class="comment">% E = 0.0019; % shell material elasticity constant</span>
+0089 <span class="comment">% E=(0.5935*10000);</span>
+0090  E=(6*1000);
+0091 <span class="comment">% E=0.5935;</span>
+0092 v = 0.4; <span class="comment">% shell material poisson ratio</span>
+0093 
+0094 
+0095 C = E / ((1+v)*(1-2*v))*[1-v ,  v , v ,  0      ,    0     ,   0      ;
+0096                           v  , 1-v, v ,  0      ,    0     ,   0      ;
+0097                           v  ,  v ,1-v,  0      ,    0     ,   0      ;
+0098                           0  ,  0 , 0 ,(1-2*v)/2,    0     ,   0      ;
+0099                           0  ,  0 , 0 ,   0     , (1-2*v)/2,   0      ;
+0100                           0  ,  0 , 0 ,  0      ,    0     ,(1-2*v)/2];
+0101                       
+0102                       
+0103                     
+0104                     
+0105 <span class="comment">%arxikopoihsh twn pinakwn akampsias kai paramorfwsewn</span>
+0106 
+0107 Ke = zeros(12,12,elements);
+0108 B = zeros(6,12,elements);
+0109 <span class="comment">% modelopoiisi from finite element modeling in surgery simulation was</span>
+0110 <span class="comment">% written by Morten Bro-Nielsen</span>
+0111  
+0112 
+0113 
+0114 <span class="keyword">for</span> n = 1:elements
+0115 
+0116    
+0117 <span class="comment">%  ind=nodes_per_elem(n,:)';</span>
+0118 <span class="comment">%  ind3=3*ind(:,[1 1 1]) - [2 1 0;2 1 0;2 1 0;2 1 0];</span>
+0119 <span class="comment">%  ind3=ind3';</span>
+0120  
+0121  
+0122 P=zeros(4);
+0123 A1=zeros(3);
+0124 A2=zeros(3);
+0125 A3=zeros(3);
+0126 A4=zeros(3);
+0127 
+0128 B1=zeros(3);
+0129 B2=zeros(3);
+0130 B3=zeros(3);
+0131 B4=zeros(3);
+0132 
+0133 C1=zeros(3);
+0134 C2=zeros(3);
+0135 C3=zeros(3);
+0136 C4=zeros(3);
+0137 
+0138 D1=zeros(3);
+0139 D2=zeros(3);
+0140 D3=zeros(3);
+0141 D4=zeros(3);
+0142 
+0143 a1=0;
+0144 a2=0;
+0145 a3=0;
+0146 a4=0;
+0147 
+0148 b1=0;
+0149 b2=0;
+0150 b3=0;
+0151 b4=0;
+0152 
+0153 c1=0;
+0154 c2=0;
+0155 c3=0;
+0156 c4=0;
+0157 
+0158 d1=0;
+0159 d2=0;
+0160 d3=0;
+0161 d4=0;
+0162 
+0163 Vol=0;
+0164 
+0165 gNode = corr(nodes_per_elem(n,:),:);
+0166 
+0167 
+0168 V1=[ 1 1 1 1;
+0169      gNode(1,1) gNode(2,1) gNode(3,1) gNode(4,1);
+0170      gNode(1,2) gNode(2,2) gNode(3,2) gNode(4,2);
+0171      gNode(1,3) gNode(2,3) gNode(3,3) gNode(4,3)];
+0172  
+0173 
+0174 <span class="comment">%    V2=[(gNode(1,1)-gNode(4,1)) (gNode(2,1)-gNode(4,1)) (gNode(3,1)-gNode(4,1));</span>
+0175 <span class="comment">%      (gNode(1,2)-gNode(4,2)) (gNode(2,2)-gNode(4,2)) (gNode(3,2)-gNode(4,2));</span>
+0176 <span class="comment">%       (gNode(1,3)-gNode(4,3)) (gNode(2,3)-gNode(4,3)) (gNode(3,3)-gNode(4,3))];</span>
+0177 
+0178  Vol=abs((1/6)*det(V1));
+0179 <span class="comment">%</span>
+0180 <span class="comment">%  Vol1=abs((1/6)*det(V2));</span>
+0181  
+0182  
+0183  
+0184  P=inv(V1);
+0185  
+0186  Q=(6*Vol)*P;
+0187  
+0188  a1=Q(1,1);
+0189  a2=Q(2,1);
+0190  a3=Q(3,1);
+0191  a4=Q(4,1);
+0192  
+0193  b1=Q(1,2);
+0194  b2=Q(2,2);
+0195  b3=Q(3,2);
+0196  b4=Q(4,2);
+0197  
+0198  c1=Q(1,3);
+0199  c2=Q(2,3);
+0200  c3=Q(3,3);
+0201  c4=Q(4,3);
+0202  
+0203  d1=Q(1,4);
+0204  d2=Q(2,4);
+0205  d3=Q(3,4);
+0206  d4=Q(4,4);
+0207  
+0208  
+0209  
+0210   B(:,:,n)= (1/(6*Vol))* [b1, 0, 0, b2, 0, 0, b3, 0, 0, b4, 0, 0;
+0211                       0,  c1, 0, 0, c2, 0, 0, c3, 0, 0, c4, 0;
+0212                       0, 0, d1, 0, 0, d2, 0, 0, d3, 0, 0, d4;
+0213                       c1, b1, 0, c2, b2, 0, c3, b3, 0, c4, b4, 0;
+0214                       0, d1, c1, 0, d2, c2, 0, d3, c3, 0, d4, c4;
+0215                       d1, 0, b1, d2, 0, b2, d3, 0, b3, d4, 0, b4];
+0216                     
+0217                     
+0218                  
+0219     <span class="comment">%pinakas  akampsias</span>
+0220   Ke(:,:,n)= Vol *B(:,:,n)' * C* B(:,:,n);
+0221 <span class="comment">%       K(ind3,ind3)=K(ind3,ind3)+Ke(:,:,n);</span>
+0222  
+0223 <span class="keyword">end</span>
+0224 
+0225  
+0226  Re = zeros(numb_nodes,3);
+0227  Re(:,:)= corr(:,:);
+0228 <span class="comment">%  Re(36,:)=[0 0 0];</span>
+0229 <span class="comment">%  Re(37,1)=0;</span>
+0230 <span class="comment">%  Re(37,2)=0;</span>
+0231 <span class="comment">%  Re(37,3)=0;</span>
+0232 <span class="comment">%</span>
+0233  Re(39,:)=[0 0 0];
+0234  Re(40,:)=[0 0 0];
+0235  Re(59,:)=[0 0 0];
+0236 <span class="comment">%  Re(111,:)=[0 0 0];</span>
+0237 <span class="comment">%  Re(119,:)=[0 0 0];</span>
+0238 <span class="comment">%  Re(217,:)=[0 0 0];</span>
+0239 <span class="comment">%  Re(229,:)=[0 0 0];</span>
+0240 <span class="comment">%  Re(295,:)=[0 0 0];</span>
+0241 <span class="comment">%  Re(316,:)=[0 0 0];</span>
+0242 <span class="comment">%</span>
+0243 <span class="comment">%</span>
+0244 <span class="comment">%</span>
+0245 <span class="comment">%  Re(20,:)=[0 0 0];</span>
+0246 <span class="comment">%  Re(21,:)=[0 0 0];</span>
+0247 <span class="comment">%</span>
+0248 <span class="comment">%</span>
+0249 <span class="comment">%  Re(110,:)=[0 0 0];</span>
+0250 
+0251 
+0252 
+0253  
+0254  nom = size(Re,2);
+0255 <span class="comment">%arithmisi twn bathwn eleutherias</span>
+0256 item = 0;
+0257 <span class="keyword">for</span> i = 1:numb_nodes;
+0258     <span class="keyword">for</span> j = 1:nom;
+0259         <span class="keyword">if</span> Re(i,j) ~= 0;
+0260             item = item +1;
+0261             Re(i,j) = item;
+0262         <span class="keyword">end</span>
+0263     <span class="keyword">end</span>
+0264  <span class="keyword">end</span>
+0265 
+0266 
+0267 
+0268 <span class="comment">%dimiourgia tou connectivity array</span>
+0269 <span class="keyword">for</span> i = 1:elements
+0270     R(i,:) = [Re(nodes_per_elem(i,1),:) Re(nodes_per_elem(i,2),:) Re(nodes_per_elem(i,3),:) Re(nodes_per_elem(i,4),:)];
+0271 <span class="keyword">end</span>
+0272 <span class="comment">% upologismos tou katholikou pinaka akamsias</span>
+0273 
+0274 Kg(item,item)=0;
+0275 <span class="comment">%dhmiourgia tou katholikou pinaka akapsias</span>
+0276 <span class="keyword">for</span> x = 1:elements;
+0277     <span class="keyword">for</span> sat = 1:12;
+0278         <span class="keyword">for</span> sut = 1:12;
+0279             <span class="keyword">if</span> (R(x,sat) ~= 0)
+0280                 <span class="keyword">if</span> (R(x,sut) ~= 0);
+0281                     Kg(R(x,sut),R(x,sat)) = Kg(R(x,sut),R(x,sat)) + Ke(sat,sut,x);
+0282                 <span class="keyword">end</span>
+0283             <span class="keyword">end</span>
+0284         <span class="keyword">end</span>
+0285     <span class="keyword">end</span>
+0286 <span class="keyword">end</span>
+0287   
+0288 <span class="comment">%</span>
+0289 <span class="comment">%</span>
+0290 <span class="comment">%</span>
+0291 <span class="comment">%</span>
+0292 <span class="comment">%</span>
+0293 <span class="comment">%</span>
+0294 <span class="comment">%</span>
+0295 <span class="comment">%</span>
+0296 <span class="comment">%</span>
+0297 <span class="comment">%</span>
+0298 <span class="comment">%</span>
+0299 prompt = {<span class="string">'arithos dinamewn pou thelete na askhthoun sto swma:'</span>};
+0300 dlg_title = <span class="string">'Input'</span>;
+0301 num_lines = 1;
+0302 answer = inputdlg(prompt,dlg_title,num_lines);
+0303 F(item) = 0;
+0304 
+0305 a = str2num(answer{1});
+0306 
+0307 <span class="comment">% FV.vertices=corr;</span>
+0308 <span class="comment">% FV.faces=nodes_per_elem;</span>
+0309 <span class="comment">% figure(1);</span>
+0310 
+0311 <span class="keyword">for</span> i=1:a;
+0312 
+0313 <span class="comment">%  h=patch(FV,'facecolor',[0.9 0 0]); camlight</span>
+0314 <span class="comment">% % set(h, 'ButtonDownFcn',@buttonDownCallback)</span>
+0315 set(gcf,<span class="string">'Pointer'</span>,<span class="string">'fullcross'</span>)
+0316 <span class="comment">%select3dtool</span>
+0317 <span class="comment">%zoom(10);</span>
+0318 
+0319 disp(<span class="string">'Click anywhere on the surface, then hit return'</span>)
+0320 pause
+0321 [p v vi face facei] = <a href="select3d.html" class="code" title="function [pout, vout, viout, facevout, faceiout]  = select3d(obj)">select3d</a>;
+0322 marker1 = line(<span class="string">'xdata'</span>,p(1),<span class="string">'ydata'</span>,p(2),<span class="string">'zdata'</span>,p(3),<span class="string">'marker'</span>,<span class="string">'o'</span>,<span class="keyword">...</span>
+0323     <span class="string">'erasemode'</span>,<span class="string">'xor'</span>,<span class="string">'markerfacecolor'</span>,<span class="string">'k'</span>);
+0324 <span class="comment">% marker2 = line('xdata',v(1),'ydata',v(2),'zdata',v(3),'marker','o',...</span>
+0325 <span class="comment">%     'erasemode','xor','markerfacecolor','k');</span>
+0326 <span class="comment">% marker2 = line('erasemode','xor','xdata',face(1,:),'ydata',face(2,:),...</span>
+0327 <span class="comment">%     'zdata',face(3,:),'linewidth',10);</span>
+0328 disp(sprintf(<span class="string">'\nYou clicked at\nX: %.2f\nY: %.2f\nZ: %.2f'</span>,p(1),p(2),p(3)'))
+0329 disp(sprintf(<span class="string">'\nThe nearest vertex is\nX: %.2f\nY: %.2f\nZ: %.2f'</span>,v(1),v(2),v(3)'))
+0330 
+0331 
+0332 <span class="comment">%</span>
+0333 <span class="comment">% [p1,p2]=find(corr==v(1));</span>
+0334 <span class="comment">% [p3,p4]=find(corr==v(2));</span>
+0335 <span class="comment">% [p5,p6]=find(corr==v(3));</span>
+0336 <span class="comment">% if (p1~=p3)&amp;&amp;(p1~=p5);</span>
+0337 <span class="comment">% disp('error with the point')</span>
+0338 <span class="comment">% end</span>
+0339 
+0340 
+0341 
+0342 [p1,p2]=find(corr==v(1));
+0343 [p3,p4]=find(corr==v(2));
+0344 <span class="keyword">if</span> p1~=p3;
+0345 disp(<span class="string">'error with the point'</span>)
+0346 <span class="keyword">end</span>
+0347 
+0348 
+0349     
+0350     prompt1={<span class="string">'katefthinsi pou thelete x or y or z'</span>,<span class="string">'metro tis dinameis'</span>};
+0351     dlg_title = <span class="string">'stoixeia dimamevn'</span>;
+0352     num_lines = 1;
+0353     apote= inputdlg(prompt1,dlg_title,num_lines);
+0354     
+0355     numb_1=str2num(apote{1});
+0356     numb_2=str2num(apote{2});
+0357     
+0358     F(Re(p1,numb_1) )= numb_2;
+0359     
+0360 <span class="keyword">end</span>
+0361 
+0362 
+0363 
+0364 
+0365 <span class="comment">%dinameis pou askounte sto swma</span>
+0366 
+0367 <span class="comment">%askhsh dunamewn stouw kombous kai se poia kateuthinsei x,y,z</span>
+0368 <span class="comment">%F(item) = 0;</span>
+0369 <span class="comment">%F(Re(250,2))  = 1000000;</span>
+0370 <span class="comment">%F(Re(65,3))  = -1000;</span>
+0371 
+0372 <span class="comment">%F(Re(282,2)) = 1000000;</span>
+0373 <span class="comment">%F(Re(352,1)) = -100000;</span>
+0374 <span class="comment">%F(Re(372,1)) = -10000;</span>
+0375 <span class="comment">%F(Re(442,3)) = -10000;</span>
+0376 <span class="comment">%F(Re(451,2)) = -10000;</span>
+0377 <span class="comment">%F(Re(450,2)) = -10000;</span>
+0378 
+0379 <span class="comment">%upologismos twn metatwpisewn</span>
+0380 
+0381 <span class="comment">%elegxos an o pinakas akapsias einai swsta kataskeuasmenos</span>
+0382 
+0383 <span class="comment">% equation=size(Kg);</span>
+0384 <span class="comment">% if equation(1) ~= rank(Kg)</span>
+0385 <span class="comment">%     display('This system stiffness matrix is badly scaled')</span>
+0386 <span class="comment">%     error('Control system support boundary conditions')</span>
+0387 <span class="comment">% else</span>
+0388     <span class="comment">%upologismou twn metatopisewn twn kombwn</span>
+0389     D = inv(Kg) * F';
+0390 <span class="comment">% end</span>
+0391 
+0392 
+0393 
+0394  
+0395 
+0396 
+0397 
+0398 
+0399 <span class="keyword">for</span>  i = 1:elements;
+0400     <span class="keyword">for</span> m = 1:12;
+0401         s = R(i, m);
+0402         <span class="keyword">if</span> s ~=0; Hu(i,m) = D(s) ;
+0403         <span class="keyword">else</span>      Hu(i,m)  = 0   ;
+0404         <span class="keyword">end</span>
+0405     <span class="keyword">end</span>
+0406 <span class="keyword">end</span>
+0407 
+0408 
+0409 
+0410 <span class="comment">%upologismos strain(tropes) strain=B*diplacements(ux,uy,uz)</span>
+0411 e=zeros(6,1,elements);
+0412 <span class="keyword">for</span> i=1:elements;
+0413     e(:,:,i)= B(:,:,i)* Hu(i,:)';
+0414 
+0415 <span class="keyword">end</span>
+0416 <span class="comment">%upologismos stress(taseis) stress=C*strain</span>
+0417 
+0418 str=zeros(6,1,elements);
+0419 <span class="keyword">for</span> p=1:elements;
+0420     str(:,:,p)=C*e(:,:,p);
+0421 <span class="keyword">end</span>
+0422 
+0423 
+0424 dis=zeros(numb_nodes,3);
+0425 <span class="comment">%oi metatopiseis kathe kombou me thn seira pou briskontai ston corr pinaka</span>
+0426 <span class="keyword">for</span>  i = 1:elements;
+0427     <span class="keyword">for</span> j=1:4;
+0428         <span class="keyword">if</span> j==1;
+0429             b=1;
+0430             dis(nodes_per_elem(i,j),:)= [Hu(i,b) Hu(i,b+1) Hu(i,b+2)];
+0431         <span class="keyword">else</span> <span class="keyword">if</span> j==2;
+0432                 b=4;
+0433                 dis(nodes_per_elem(i,j),:)= [Hu(i,b) Hu(i,b+1) Hu(i,b+2)];
+0434             <span class="keyword">else</span> <span class="keyword">if</span> j==3;
+0435                     b=7;
+0436                     dis(nodes_per_elem(i,j),:)= [Hu(i,b) Hu(i,b+1) Hu(i,b+2)];
+0437                 <span class="keyword">else</span>
+0438                     b=10;
+0439                     dis(nodes_per_elem(i,j),:)= [Hu(i,b) Hu(i,b+1) Hu(i,b+2)];
+0440                 <span class="keyword">end</span>
+0441             <span class="keyword">end</span>
+0442         <span class="keyword">end</span>
+0443     <span class="keyword">end</span>
+0444 <span class="keyword">end</span>
+0445 size(Hu);
+0446 
+0447 
+0448 <span class="comment">%upologismos twn suntetagmenwn twn paramorfwmenwn kombwn</span>
+0449 
+0450 
+0451 <span class="comment">%upologismos tou neou pinaka new_vertices gia thn apeikonish tou</span>
+0452 <span class="comment">%paramorfwmenou montelou</span>
+0453 <a href="../../../ViHaSTiS/new_vertices.html" class="code" title="function [new_vertices, e, stress] =new_vertices(Inv_Kg,d_contact, f_contact, k, C, R,elements, B, numb_nodes, nodes_per_elem, coord)">new_vertices</a>=zeros(numb_nodes,3);
+0454 <a href="../../../ViHaSTiS/new_vertices.html" class="code" title="function [new_vertices, e, stress] =new_vertices(Inv_Kg,d_contact, f_contact, k, C, R,elements, B, numb_nodes, nodes_per_elem, coord)">new_vertices</a>(:,:)= corr(:,:) + dis(:,:);
+0455 
+0456 
+0457 aa=size(<a href="../../../ViHaSTiS/new_vertices.html" class="code" title="function [new_vertices, e, stress] =new_vertices(Inv_Kg,d_contact, f_contact, k, C, R,elements, B, numb_nodes, nodes_per_elem, coord)">new_vertices</a> );
+0458 
+0459 
+0460 
+0461 <span class="comment">% figure(2);</span>
+0462 <span class="comment">% tetramesh(nodes_per_elem,new_vertices);</span>
+0463 <span class="comment">% hold on;</span>
+0464 <span class="comment">% tetramesh(nodes_per_elem,corr,'Facecolor','m');</span>
+0465 <span class="comment">% % axis tight</span>
+0466 <span class="comment">% % limits=axis;</span>
+0467 <span class="comment">% %</span>
+0468 <span class="comment">% figure(2)</span>
+0469 <span class="comment">% tetramesh(nodes_per_elem,corr,'Facecolor','m');</span>
+0470 <span class="comment">% tetramesh(nodes_per_elem,corr);</span>
+0471 <span class="comment">% view(270,0);</span>
+0472 <span class="comment">% camlight;</span>
+0473 <span class="comment">% figure(3)</span>
+0474 <span class="comment">% tetramesh(nodes_per_elem,new_vertices);</span>
+0475 <span class="comment">% camlight;</span>
+0476 <span class="comment">% view(270,0);</span>
+0477 
+0478 figure(2)
+0479 trimesh(faces,corr(:,1),corr(:,2),corr(:,3));
+0480 view(270,0);
+0481 camlight;
+0482 figure(3)
+0483 trimesh(faces,<a href="../../../ViHaSTiS/new_vertices.html" class="code" title="function [new_vertices, e, stress] =new_vertices(Inv_Kg,d_contact, f_contact, k, C, R,elements, B, numb_nodes, nodes_per_elem, coord)">new_vertices</a>(:,1),<a href="../../../ViHaSTiS/new_vertices.html" class="code" title="function [new_vertices, e, stress] =new_vertices(Inv_Kg,d_contact, f_contact, k, C, R,elements, B, numb_nodes, nodes_per_elem, coord)">new_vertices</a>(:,2),<a href="../../../ViHaSTiS/new_vertices.html" class="code" title="function [new_vertices, e, stress] =new_vertices(Inv_Kg,d_contact, f_contact, k, C, R,elements, B, numb_nodes, nodes_per_elem, coord)">new_vertices</a>(:,3));
+0484 view(270,0);
+0485 camlight;
+0486 
+0487 <span class="comment">%</span>
+0488 <span class="comment">%</span>
+0489 <span class="comment">%</span>
+0490 <span class="comment">%</span>
+0491 <span class="comment">%</span>
+0492 <span class="comment">%</span>
+0493 <span class="comment">%</span>
+0494 <span class="comment">%</span>
+0495 <span class="comment">%</span>
+0496 <span class="comment">%</span>
+0497 <span class="comment">%</span>
+0498 <span class="comment">%</span>
+0499 <span class="comment">%</span>
+0500 <span class="comment">%</span>
+0501 <span class="comment">%</span>
+0502 <span class="comment">%</span>
+0503 <span class="comment">%</span>
+0504 <span class="comment">%</span>
+0505 <span class="comment">%</span>
+0506 <span class="comment">%</span>
+0507 <span class="comment">%</span>
+0508 <span class="comment">%</span>
+0509 <span class="comment">%</span>
+0510 <span class="comment">%</span>
+0511 <span class="comment">%</span>
+0512 <span class="comment">%</span>
+0513 <span class="comment">%</span>
+0514 <span class="comment">%</span>
+0515 <span class="comment">%</span>
+0516 <span class="comment">%</span>
+0517 <span class="comment">%</span>
+0518 <span class="comment">%</span>
+0519 <span class="comment">%</span>
+0520 <span class="comment">%</span>
+0521 <span class="comment">%</span>
+0522 <span class="comment">%</span>
+0523 <span class="comment">%</span>
+0524 <span class="comment">%</span>
+0525 <span class="comment">%</span>
+0526 <span class="comment">%</span>
+0527 <span class="comment">%</span>
+0528 <span class="comment">%</span>
+0529 <span class="comment">%</span>
+0530 <span class="comment">%</span>
+0531 <span class="comment">%</span>
+0532 <span class="comment">%</span>
+0533 <span class="comment">%</span>
+0534 <span class="comment">%</span>
+0535 <span class="comment">%</span>
+0536 <span class="comment">%</span>
+0537 <span class="comment">%</span>
+0538 <span class="comment">%</span>
+0539 <span class="comment">%</span>
+0540 <span class="comment">%</span>
+0541 <span class="comment">%</span>
+0542 <span class="comment">%</span>
+0543 <span class="comment">%</span>
+0544 <span class="comment">%</span>
+0545 <span class="comment">%</span>
+0546 <span class="comment">%</span>
+0547 <span class="comment">%</span>
+0548 <span class="comment">%</span>
+0549 <span class="comment">%</span>
+0550 <span class="comment">%</span>
+0551 <span class="comment">%</span>
+0552 <span class="comment">%</span>
+0553 <span class="comment">%</span>
+0554 <span class="comment">%</span>
+0555 <span class="comment">%</span>
+0556 <span class="comment">%</span>
+0557 <span class="comment">%</span>
+0558 <span class="comment">%</span>
+0559 <span class="comment">%</span>
+0560 <span class="comment">%</span>
+0561 <span class="comment">%</span>
+0562 <span class="comment">%</span>
+0563 <span class="comment">%</span>
+0564 <span class="comment">%</span>
+0565 <span class="comment">%</span>
+0566 <span class="comment">%</span>
+0567 <span class="comment">%</span>
+0568 <span class="comment">%</span>
+0569 <span class="comment">%</span>
+0570 <span class="comment">%</span>
+0571 <span class="comment">%</span>
+0572 <span class="comment">%</span>
+0573 <span class="comment">%</span>
+0574 <span class="comment">%</span>
+0575</pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

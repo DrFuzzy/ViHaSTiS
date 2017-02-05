@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of force</title>
+  <meta name="keywords" content="force">
+  <meta name="description" content="force - Find node where force applies and calculate force vector">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html ViHaSTiS -->
+<h1>force
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>force - Find node where force applies and calculate force vector</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [f_contact, k, d_contact] = force(dipl_node,coord_find,pos_dipl_node,Inv_Kg) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">force - Find node where force applies and calculate force vector
+
+ Syntax: [f_contact, k, d_contact] = force(dipl_node,coord_find,...
+                                    pos_dipl_node,Inv_Kg)
+
+ Inputs:
+    dipl_node - coordinater with the position where force applies
+    coord_find - matrix with nodes coordinates we used into find function
+    pos_dipl_node - the position where the user want to move the node
+    Inv_Kg- inverse global stiffness matrix
+
+ Outputs:
+    f_contact - force vector
+    k - the node which deformed
+    d_contact - the diplacement vector
+
+
+
+ Other m-files required: none
+ Subfunctions: none
+ MAT-files required: none
+
+
+ Author: Dimitris Dounas
+ Work address: none
+ email: jdounas1992@gmail.com
+ Website: none
+ May 2015; Last revision: none</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ROS_omni.html" class="code" title="function ROS_omni(coord, face, nodes_per_elem, numb_nodes, elements,young_modulus, poisson_ratio, handles_axes1, handles_axes2,window, fig, handles_disp, handles_f, handles_p)">ROS_omni</a>	ROS_omni - provides the interface with Phantom Omni haptic device</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [f_contact, k, d_contact] = force(dipl_node,coord_find,</a><span class="keyword">...</span>
+0002     pos_dipl_node,Inv_Kg)
+0003 <span class="comment">%force - Find node where force applies and calculate force vector</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% Syntax: [f_contact, k, d_contact] = force(dipl_node,coord_find,...</span>
+0006 <span class="comment">%                                    pos_dipl_node,Inv_Kg)</span>
+0007 <span class="comment">%</span>
+0008 <span class="comment">% Inputs:</span>
+0009 <span class="comment">%    dipl_node - coordinater with the position where force applies</span>
+0010 <span class="comment">%    coord_find - matrix with nodes coordinates we used into find function</span>
+0011 <span class="comment">%    pos_dipl_node - the position where the user want to move the node</span>
+0012 <span class="comment">%    Inv_Kg- inverse global stiffness matrix</span>
+0013 <span class="comment">%</span>
+0014 <span class="comment">% Outputs:</span>
+0015 <span class="comment">%    f_contact - force vector</span>
+0016 <span class="comment">%    k - the node which deformed</span>
+0017 <span class="comment">%    d_contact - the diplacement vector</span>
+0018 <span class="comment">%</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% Other m-files required: none</span>
+0022 <span class="comment">% Subfunctions: none</span>
+0023 <span class="comment">% MAT-files required: none</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% Author: Dimitris Dounas</span>
+0027 <span class="comment">% Work address: none</span>
+0028 <span class="comment">% email: jdounas1992@gmail.com</span>
+0029 <span class="comment">% Website: none</span>
+0030 <span class="comment">% May 2015; Last revision: none</span>
+0031 
+0032 <span class="comment">%------------- BEGIN CODE --------------</span>
+0033 
+0034 <span class="comment">% find the node which will deform</span>
+0035 
+0036 k = find(coord_find(:,1)==dipl_node(:,1));
+0037 l = find(coord_find(:,2)==dipl_node(:,2));
+0038 m = find(coord_find(:,3)==dipl_node(:,3));
+0039 
+0040 <span class="comment">% check if node exists</span>
+0041 <span class="keyword">if</span> (k~=l) &amp; (k~=m)
+0042     disp(<span class="string">'error with the point'</span>)
+0043 <span class="keyword">end</span>
+0044 <span class="comment">% the position of degrees of freedom in global stiffness matrix</span>
+0045 
+0046 c=k*3;
+0047 b=c-1;
+0048 a=b-1;
+0049 
+0050 <span class="comment">% calculate K_bb which we use to calculate f_contact</span>
+0051 K_bb=  [Inv_Kg(a,a) Inv_Kg(a,b) Inv_Kg(a,c);
+0052     Inv_Kg(b,a) Inv_Kg(b,b) Inv_Kg(b,c);
+0053     Inv_Kg(c,a) Inv_Kg(c,b) Inv_Kg(c,c)];
+0054 
+0055 Inv_K_bb=inv(K_bb);
+0056 <span class="comment">% calculate d_contact</span>
+0057 d_contact = [pos_dipl_node(:,1)-dipl_node(:,1)<span class="keyword">...</span>
+0058     pos_dipl_node(:,2)-dipl_node(:,2) pos_dipl_node(:,3)-dipl_node(:,3)]';
+0059 <span class="comment">%calculate force vector</span>
+0060 f_contact = Inv_K_bb* d_contact;
+0061 
+0062 
+0063 <span class="keyword">end</span> <span class="comment">%function</span>
+0064 
+0065 <span class="comment">%------------- END OF CODE --------------</span></pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

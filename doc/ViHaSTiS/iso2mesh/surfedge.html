@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of surfedge</title>
+  <meta name="keywords" content="surfedge">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html ViHaSTiS --><!-- menu.html iso2mesh -->
+<h1>surfedge
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function openedge=surfedge(f) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ openedge=surfedge(f)
+
+ find the edge of an open surface or surface of a volume
+
+ author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)
+ date: 2007/11/21
+
+ input:
+      f: input, surface face element list, dimension (be,3)
+
+ output:
+      openedge: list of edges of the specified surface
+
+ -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="isoctavemesh.html" class="code" title="function [isoctave verinfo]=isoctavemesh">isoctavemesh</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="meshcheckrepair.html" class="code" title="function [node,elem]=meshcheckrepair(node,elem,opt,varargin)">meshcheckrepair</a>	</li><li><a href="savesurfpoly.html" class="code" title="function savesurfpoly(v,f,holelist,regionlist,p0,p1,fname,forcebox)">savesurfpoly</a>	</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function openedge=surfedge(f)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% openedge=surfedge(f)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% find the edge of an open surface or surface of a volume</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)</span>
+0008 <span class="comment">% date: 2007/11/21</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% input:</span>
+0011 <span class="comment">%      f: input, surface face element list, dimension (be,3)</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% output:</span>
+0014 <span class="comment">%      openedge: list of edges of the specified surface</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</span>
+0017 <span class="comment">%</span>
+0018 
+0019 <span class="keyword">if</span>(isempty(f))
+0020     openedge=[];
+0021     <span class="keyword">return</span>;
+0022 <span class="keyword">end</span>
+0023 
+0024 <span class="keyword">if</span>(size(f,2)==3)
+0025     edges=[f(:,[1,2]);
+0026            f(:,[2,3]);
+0027            f(:,[3,1])];             <span class="comment">% create all the edges</span>
+0028 <span class="keyword">elseif</span>(size(f,2)==4)
+0029     edges=[f(:,[1,2,3]);
+0030            f(:,[2,1,4]);
+0031            f(:,[1,3,4]);
+0032            f(:,[2,4,3])];             <span class="comment">% create all the edges</span>
+0033 <span class="keyword">else</span>
+0034     error(<span class="string">'surfedge only supports 2D and 3D elements'</span>);
+0035 <span class="keyword">end</span>
+0036 <span class="comment">% node4=[f(:,3);f(:,2);f(:,1)];   % node idx concatinated</span>
+0037 edgesort=sort(edges,2);
+0038 [foo,ix,jx]=unique(edgesort,<span class="string">'rows'</span>);
+0039 
+0040 <span class="keyword">if</span>(<a href="isoctavemesh.html" class="code" title="function [isoctave verinfo]=isoctavemesh">isoctavemesh</a>)
+0041         u=unique(jx);
+0042     qx=u(hist(jx,u)==1);
+0043 <span class="keyword">else</span>
+0044     vec=histc(jx,1:max(jx));
+0045     qx=find(vec==1);
+0046 <span class="keyword">end</span>
+0047 openedge=edges(ix(qx),:);
+0048 <span class="comment">% node4=node4(ix(qx));</span></pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

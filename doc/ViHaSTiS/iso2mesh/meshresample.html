@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of meshresample</title>
+  <meta name="keywords" content="meshresample">
+  <meta name="description" content="">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- ../menu.html ViHaSTiS --><!-- menu.html iso2mesh -->
+<h1>meshresample
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong></strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="box"><strong>function [node,elem]=meshresample(v,f,keepratio) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre class="comment">
+ [node,elem]=meshresample(v,f,keepratio)
+
+ resample mesh using CGAL mesh simplification utility
+
+ author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)
+ date: 2007/11/12
+
+ input:
+    v: list of nodes
+    f: list of surface elements (each row for each triangle)
+    keepratio: decimation rate, a number less than 1, as the percentage
+               of the elements after the sampling
+
+ output:
+    node: the node coordinates of the sampled surface mesh
+    elem: the element list of the sampled surface mesh
+
+ -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="deletemeshfile.html" class="code" title="function flag=deletemeshfile(fname)">deletemeshfile</a>	</li><li><a href="fallbackexeext.html" class="code" title="function exesuff=fallbackexeext(exesuffix, exename)">fallbackexeext</a>	</li><li><a href="getexeext.html" class="code" title="function exesuff=getexeext()">getexeext</a>	</li><li><a href="mcpath.html" class="code" title="function binname=mcpath(fname)">mcpath</a>	</li><li><a href="meshcheckrepair.html" class="code" title="function [node,elem]=meshcheckrepair(node,elem,opt,varargin)">meshcheckrepair</a>	</li><li><a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>	</li><li><a href="readoff.html" class="code" title="function [node,elem]=readoff(fname)">readoff</a>	</li><li><a href="saveoff.html" class="code" title="function saveoff(v,f,fname)">saveoff</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li><li><a href="../../ViHaSTiS/surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<ul style="list-style-image:url(../../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [node,elem]=domeshsimplify(v,f,keepratio)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [node,elem]=meshresample(v,f,keepratio)</a>
+0002 <span class="comment">%</span>
+0003 <span class="comment">% [node,elem]=meshresample(v,f,keepratio)</span>
+0004 <span class="comment">%</span>
+0005 <span class="comment">% resample mesh using CGAL mesh simplification utility</span>
+0006 <span class="comment">%</span>
+0007 <span class="comment">% author: Qianqian Fang (fangq&lt;at&gt; nmr.mgh.harvard.edu)</span>
+0008 <span class="comment">% date: 2007/11/12</span>
+0009 <span class="comment">%</span>
+0010 <span class="comment">% input:</span>
+0011 <span class="comment">%    v: list of nodes</span>
+0012 <span class="comment">%    f: list of surface elements (each row for each triangle)</span>
+0013 <span class="comment">%    keepratio: decimation rate, a number less than 1, as the percentage</span>
+0014 <span class="comment">%               of the elements after the sampling</span>
+0015 <span class="comment">%</span>
+0016 <span class="comment">% output:</span>
+0017 <span class="comment">%    node: the node coordinates of the sampled surface mesh</span>
+0018 <span class="comment">%    elem: the element list of the sampled surface mesh</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">% -- this function is part of iso2mesh toolbox (http://iso2mesh.sf.net)</span>
+0021 <span class="comment">%</span>
+0022 
+0023 [node,elem]=<a href="#_sub1" class="code" title="subfunction [node,elem]=domeshsimplify(v,f,keepratio)">domeshsimplify</a>(v,f,keepratio);
+0024 
+0025 <span class="keyword">if</span>(length(node)==0)
+0026     warning([<span class="string">'Your input mesh contains topological defects, and the '</span>,<span class="keyword">...</span>
+0027            <span class="string">'mesh resampling utility aborted during processing. Now iso2mesh '</span>,<span class="keyword">...</span>
+0028            <span class="string">'is trying to repair your mesh with meshcheckrepair. '</span>,<span class="keyword">...</span>
+0029            <span class="string">'You can also call this manually before passing your mesh to meshresample.'</span>] );
+0030     [vnew,fnew]=<a href="meshcheckrepair.html" class="code" title="function [node,elem]=meshcheckrepair(node,elem,opt,varargin)">meshcheckrepair</a>(v,f);
+0031     [node,elem]=<a href="#_sub1" class="code" title="subfunction [node,elem]=domeshsimplify(v,f,keepratio)">domeshsimplify</a>(vnew,fnew,keepratio);
+0032 <span class="keyword">end</span>
+0033 [node,I,J]=unique(node,<span class="string">'rows'</span>);
+0034 elem=J(elem);
+0035 <a href="saveoff.html" class="code" title="function saveoff(v,f,fname)">saveoff</a>(node,elem,<a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">'post_remesh.off'</span>));
+0036 
+0037 <span class="keyword">end</span>
+0038 
+0039 <span class="comment">% function to perform the actual resampling</span>
+0040 <a name="_sub1" href="#_subfunctions" class="code">function [node,elem]=domeshsimplify(v,f,keepratio)</a>
+0041   exesuff=<a href="getexeext.html" class="code" title="function exesuff=getexeext()">getexeext</a>;
+0042   exesuff=<a href="fallbackexeext.html" class="code" title="function exesuff=fallbackexeext(exesuffix, exename)">fallbackexeext</a>(exesuff,<span class="string">'cgalsimp2'</span>);
+0043 
+0044   <a href="saveoff.html" class="code" title="function saveoff(v,f,fname)">saveoff</a>(v,f,<a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">'pre_remesh.off'</span>));
+0045   <a href="deletemeshfile.html" class="code" title="function flag=deletemeshfile(fname)">deletemeshfile</a>(<a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">'post_remesh.off'</span>));
+0046   system([<span class="string">' &quot;'</span> <a href="mcpath.html" class="code" title="function binname=mcpath(fname)">mcpath</a>(<span class="string">'cgalsimp2'</span>) exesuff <span class="string">'&quot; &quot;'</span> <a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">'pre_remesh.off'</span>) <span class="string">'&quot; '</span> num2str(keepratio) <span class="string">' &quot;'</span> <a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">'post_remesh.off'</span>) <span class="string">'&quot;'</span>]);
+0047   [node,elem]=<a href="readoff.html" class="code" title="function [node,elem]=readoff(fname)">readoff</a>(<a href="mwpath.html" class="code" title="function tempname=mwpath(fname)">mwpath</a>(<span class="string">'post_remesh.off'</span>));
+0048 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

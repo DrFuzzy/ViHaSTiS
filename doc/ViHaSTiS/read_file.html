@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of read_file</title>
+  <meta name="keywords" content="read_file">
+  <meta name="description" content="triang_to_tetrah - read the obj file and converts the triange elements to">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html ViHaSTiS -->
+<h1>read_file
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>triang_to_tetrah - read the obj file and converts the triange elements to</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [coord, nodes_per_elem, numb_nodes, elements,face] = read_file(filename) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">triang_to_tetrah - read the obj file and converts the triange elements to
+tetrahedral elements
+
+ Syntax:  [coord, nodes_per_elem, numb_nodes,...
+                             elements, face] = triang_to_tetrah(filename)
+
+ Inputs:
+    filename - obj file name
+
+
+ Outputs:
+    coord - matrix with coordinates of all nodes
+    nodes_per_elem - matrix with the nodes connecting each element
+    numb_nodes - number of nodes
+    elements - number of elements
+    face - matrix with the nodes with built the surface
+
+
+ Other m-files required: none
+ Subfunctions: read_wobj(), surf2mesh()
+ MAT-files required: none
+
+
+ Author: Dimitris Dounas
+ Work address: none
+ email: jdounas1992@gmail.com
+ Website: none
+ May 2015; Last revision: none</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="../ViHaSTiS/iso2mesh/surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li><li><a href="read_wobj.html" class="code" title="function OBJ=read_wobj(fullfilename)">read_wobj</a>	Read the objects from a Wavefront OBJ file</li><li><a href="surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>	</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ViHaSTiS.html" class="code" title="function varargout = ViHaSTiS(varargin)">ViHaSTiS</a>	ViHaSTiS MATLAB code for ViHaSTiS.fig</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [coord, nodes_per_elem, numb_nodes, elements,</a><span class="keyword">...</span>
+0002     face] = read_file(filename)
+0003 <span class="comment">%triang_to_tetrah - read the obj file and converts the triange elements to</span>
+0004 <span class="comment">%tetrahedral elements</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Syntax:  [coord, nodes_per_elem, numb_nodes,...</span>
+0007 <span class="comment">%                             elements, face] = triang_to_tetrah(filename)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Inputs:</span>
+0010 <span class="comment">%    filename - obj file name</span>
+0011 <span class="comment">%</span>
+0012 <span class="comment">%</span>
+0013 <span class="comment">% Outputs:</span>
+0014 <span class="comment">%    coord - matrix with coordinates of all nodes</span>
+0015 <span class="comment">%    nodes_per_elem - matrix with the nodes connecting each element</span>
+0016 <span class="comment">%    numb_nodes - number of nodes</span>
+0017 <span class="comment">%    elements - number of elements</span>
+0018 <span class="comment">%    face - matrix with the nodes with built the surface</span>
+0019 <span class="comment">%</span>
+0020 <span class="comment">%</span>
+0021 <span class="comment">% Other m-files required: none</span>
+0022 <span class="comment">% Subfunctions: read_wobj(), surf2mesh()</span>
+0023 <span class="comment">% MAT-files required: none</span>
+0024 <span class="comment">%</span>
+0025 <span class="comment">%</span>
+0026 <span class="comment">% Author: Dimitris Dounas</span>
+0027 <span class="comment">% Work address: none</span>
+0028 <span class="comment">% email: jdounas1992@gmail.com</span>
+0029 <span class="comment">% Website: none</span>
+0030 <span class="comment">% May 2015; Last revision: none</span>
+0031 
+0032 <span class="comment">%------------- BEGIN CODE --------------</span>
+0033 
+0034 <span class="comment">% read file</span>
+0035 OBJ=<a href="read_wobj.html" class="code" title="function OBJ=read_wobj(fullfilename)">read_wobj</a>(filename);
+0036 
+0037 <span class="comment">% node coordinates</span>
+0038 x = OBJ.vertices(:,1);
+0039 y = OBJ.vertices(:,2);
+0040 z = OBJ.vertices(:,3);
+0041 v=[x y z];
+0042 
+0043 <span class="comment">% triangles elements</span>
+0044 f=OBJ.objects(3).data.vertices;
+0045 
+0046 <span class="comment">% convert elements from triangles to tetrahedra</span>
+0047 [node,elem,faces]=<a href="surf2mesh.html" class="code" title="function [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)">surf2mesh</a>(v,f,[1 1 1],[100 100 100],0.1,25);
+0048 
+0049 <span class="comment">% surface elements</span>
+0050 face=[faces(:,1) faces(:,2) faces(:,3)];
+0051 
+0052 <span class="comment">% tetrahedra elements</span>
+0053 nodes_per_elem=[elem(:,1) elem(:,2) elem(:,3) elem(:,4)] ;
+0054 
+0055 <span class="comment">% convert coordinates from cm to m</span>
+0056 coord=0.05* node;
+0057 
+0058 <span class="comment">% number of nodes</span>
+0059 numb_nodes=size(coord,1);
+0060 
+0061 <span class="comment">% number of elements</span>
+0062 elements=size(nodes_per_elem,1);
+0063 
+0064 <span class="keyword">end</span> <span class="comment">%function</span>
+0065 
+0066 <span class="comment">%------------- END OF CODE --------------</span></pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

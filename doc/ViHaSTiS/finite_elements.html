@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of finite_elements</title>
+  <meta name="keywords" content="finite_elements">
+  <meta name="description" content="finite_elements - calculate elements stiffness matrix with linear elastic">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html &copy; 2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+  <script type="text/javascript">
+    if (top.frames.length == 0) { top.location = "../index.html"; };
+  </script>
+</head>
+<body>
+<a name="_top"></a>
+<!-- menu.html ViHaSTiS -->
+<h1>finite_elements
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>finite_elements - calculate elements stiffness matrix with linear elastic</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [Ke, C, B] = finite_elements(numb_nodes, elements, coord,nodes_per_elem, young_modulus, poisson_ratio) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">finite_elements - calculate elements stiffness matrix with linear elastic
+modeling
+
+ Syntax:  [Ke, C, B] = finite_elements(numb_nodes, elements, coord,...
+                          nodes_per_elem, young_modulus, poisson_ratio)
+
+ Inputs:
+    numb_nodes - number of nodes
+    elements - number of elements
+    coord - matrix with coordinates of all nodes
+    nodes_per_elem - matrix with the nodes connecting each element
+    young_modulus - Young Modulus
+    poisson_ratio - Poisson ratio
+
+ Outputs:
+    Ke - metrix with the stiifness matrix for each element
+    C  - elasticity matrix
+    B  - deformable matrix
+
+
+ Other m-files required: none
+ Subfunctions: none
+ MAT-files required: none
+
+
+ Author: Dimitris Dounas
+ Work address: none
+ email: jdounas1992@gmail.com
+ Website: none
+ May 2015; Last revision: none</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="ROS_omni.html" class="code" title="function ROS_omni(coord, face, nodes_per_elem, numb_nodes, elements,young_modulus, poisson_ratio, handles_axes1, handles_axes2,window, fig, handles_disp, handles_f, handles_p)">ROS_omni</a>	ROS_omni - provides the interface with Phantom Omni haptic device</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [Ke, C, B] = finite_elements(numb_nodes, elements, coord, </a><span class="keyword">...</span>
+0002     nodes_per_elem, young_modulus, poisson_ratio)
+0003 <span class="comment">%finite_elements - calculate elements stiffness matrix with linear elastic</span>
+0004 <span class="comment">%modeling</span>
+0005 <span class="comment">%</span>
+0006 <span class="comment">% Syntax:  [Ke, C, B] = finite_elements(numb_nodes, elements, coord,...</span>
+0007 <span class="comment">%                          nodes_per_elem, young_modulus, poisson_ratio)</span>
+0008 <span class="comment">%</span>
+0009 <span class="comment">% Inputs:</span>
+0010 <span class="comment">%    numb_nodes - number of nodes</span>
+0011 <span class="comment">%    elements - number of elements</span>
+0012 <span class="comment">%    coord - matrix with coordinates of all nodes</span>
+0013 <span class="comment">%    nodes_per_elem - matrix with the nodes connecting each element</span>
+0014 <span class="comment">%    young_modulus - Young Modulus</span>
+0015 <span class="comment">%    poisson_ratio - Poisson ratio</span>
+0016 <span class="comment">%</span>
+0017 <span class="comment">% Outputs:</span>
+0018 <span class="comment">%    Ke - metrix with the stiifness matrix for each element</span>
+0019 <span class="comment">%    C  - elasticity matrix</span>
+0020 <span class="comment">%    B  - deformable matrix</span>
+0021 <span class="comment">%</span>
+0022 <span class="comment">%</span>
+0023 <span class="comment">% Other m-files required: none</span>
+0024 <span class="comment">% Subfunctions: none</span>
+0025 <span class="comment">% MAT-files required: none</span>
+0026 <span class="comment">%</span>
+0027 <span class="comment">%</span>
+0028 <span class="comment">% Author: Dimitris Dounas</span>
+0029 <span class="comment">% Work address: none</span>
+0030 <span class="comment">% email: jdounas1992@gmail.com</span>
+0031 <span class="comment">% Website: none</span>
+0032 <span class="comment">% May 2015; Last revision: none</span>
+0033 
+0034 <span class="comment">%------------- BEGIN CODE --------------</span>
+0035 
+0036 <span class="comment">% shell material elasticity constant (YOUNG MODULUS)</span>
+0037 E = young_modulus;
+0038 
+0039 <span class="comment">% shell material poisson ratio</span>
+0040 v = poisson_ratio;
+0041 
+0042 <span class="comment">% calculate the elastic matrix</span>
+0043 C = E / ((1+v)*(1-2*v))*          [1-v ,  v , v ,  0      ,    0     ,   0      ;
+0044                                    v  , 1-v, v ,  0      ,    0     ,   0      ;
+0045                                    v  ,  v ,1-v,  0      ,    0     ,   0      ;
+0046                                    0  ,  0 , 0 ,(1-2*v)/2,    0     ,   0      ;
+0047                                    0  ,  0 , 0 ,   0     , (1-2*v)/2,   0      ;
+0048                                     0  ,  0 , 0 ,  0      ,    0     ,(1-2*v)/2];
+0049 
+0050 <span class="comment">% initialize matrix Ke and B</span>
+0051 Ke = zeros(12,12,elements);
+0052 B = zeros(6,12,elements);
+0053 
+0054 <span class="comment">% calculate the stiffness matrix for each element</span>
+0055 <span class="keyword">for</span> n = 1:elements
+0056     
+0057     V1=zeros(4);
+0058     P=zeros(4);
+0059     Q=zeros(4);
+0060     
+0061     Vol=0;
+0062     
+0063     gNode = coord(nodes_per_elem(n,:),:);
+0064     
+0065     V1=[ 1 1 1 1;
+0066         gNode(1,1) gNode(2,1) gNode(3,1) gNode(4,1);
+0067         gNode(1,2) gNode(2,2) gNode(3,2) gNode(4,2);
+0068         gNode(1,3) gNode(2,3) gNode(3,3) gNode(4,3)];
+0069     
+0070     <span class="comment">% volume of each tetrahedron</span>
+0071     Vol=abs((1/6)*det(V1));
+0072     
+0073     P=inv(V1);
+0074     
+0075     Q=(6*Vol)*P;
+0076     
+0077     
+0078     
+0079     B(:,:,n)= (1/(6*Vol))* <span class="keyword">...</span>
+0080         [Q(1,2), 0, 0, Q(2,2), 0, 0, Q(3,2), 0, 0, Q(4,2), 0, 0;
+0081         0,  Q(1,3), 0, 0, Q(2,3), 0, 0, Q(3,3), 0, 0, Q(4,3), 0;
+0082         0, 0, Q(1,4), 0, 0, Q(2,4), 0, 0, Q(3,4), 0, 0, Q(4,4);
+0083         Q(1,3),Q(1,2),0,Q(2,3), Q(2,2),0,Q(3,3),Q(3,2),0,Q(4,3),Q(4,2),0;
+0084         0,Q(1,4),Q(1,3),0,Q(2,4),Q(2,3),0,Q(3,4),Q(3,3),0,Q(4,4),Q(4,3);
+0085         Q(1,4),0,Q(1,2),Q(2,4),0,Q(2,2),Q(3,4),0,Q(3,2),Q(4,4),0,Q(4,2)];
+0086     
+0087     
+0088     
+0089     
+0090     
+0091     <span class="comment">% calculate the stiffness matrix</span>
+0092     Ke(:,:,n)= Vol *B(:,:,n)' * C* B(:,:,n);
+0093     
+0094 <span class="keyword">end</span> <span class="comment">%function</span>
+0095 
+0096 
+0097 
+0098 <span class="comment">%------------- END OF CODE --------------</span></pre></div>
+<hr><address>Generated on Mon 25-May-2015 01:08:09 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" target="_parent">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>
